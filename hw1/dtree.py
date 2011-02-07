@@ -41,7 +41,7 @@ def compute_entropy(dblWeightTrue,dblWeightFalse):
     1.0"""
     t = dblWeightTrue / (dblWeightTrue + dblWeightFalse)
     f = dblWeightFalse / (dblWeightTrue + dblWeightFalse)
-    return -1 * t*math.log(t if t != 0 else 1,2) + -1*f*math.log(f if f!=0 else 1,2)
+    return -t*log2(t) - f*log2(f)
 
 def separate_by_attribute(listInst, ixAttr):
     """Build a dictionary mapping attribute values to lists of instances.
@@ -249,7 +249,14 @@ def count_instance_attributes(listInst):
     3
     >>> count_instance_attributes([Instance([1,2],True),Instance([3],False)])
     """
-    raise NotImplementedError
+    i = None
+    for inst in listInst:
+        if i == None:
+            i = len(inst.listAttrs)
+        elif i != len(inst.listAttrs):
+            return None
+    return i
+
 
 def build_tree(listInst, dblMinGain=0.0, cMaxLevel=-1):
     """Build a decision tree with the ID3 algorithm from a list of
@@ -263,7 +270,10 @@ def build_tree(listInst, dblMinGain=0.0, cMaxLevel=-1):
 
 def classify(dt, inst):
     """Using decision tree dt, return the label for instance inst."""
-    raise NotImplementedError
+    if dt.is_leaf():
+        return dt.fLabel
+    else:
+        return classify(dt.dictChildren[inst.listAttrs[dt.ixAttr]], inst)
 
 class EvaluationResult(object):
     def __init__(self, listInstCorrect, listInstIncorrect, oClassifier):
