@@ -225,7 +225,7 @@ def build_tree_rec(setIxAttr, listInst, dblMinGain, cRemainingLevels):
     __init__). This will be useful in pruning."""
     if check_for_common_label(listInst) != None:
       return DTree(fLabel=check_for_common_label(listInst))
-    if len(setIxAttr) == 0:
+    if setIxAttr == None:
       return DTree(fLabel = majority_label(listInst))
     if cRemainingLevels == 0:
       return DTree(fLabel = majority_label(listInst))
