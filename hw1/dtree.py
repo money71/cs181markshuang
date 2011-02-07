@@ -273,8 +273,10 @@ def classify(dt, inst):
     """Using decision tree dt, return the label for instance inst."""
     if dt.is_leaf():
         return dt.fLabel
-    else:
+    elif dt.dictChildren.has_key(inst.listAttrs[dt.ixAttr]):
         return classify(dt.dictChildren[inst.listAttrs[dt.ixAttr]], inst)
+    else:
+        return dt.fDefaultLabel
 
 class EvaluationResult(object):
     def __init__(self, listInstCorrect, listInstIncorrect, oClassifier):
