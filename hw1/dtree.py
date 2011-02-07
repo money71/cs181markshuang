@@ -132,7 +132,16 @@ def majority_label(listInst):
     >>> listInst =[Instance([],False),Instance([],True),Instance([],False)]
     >>> majority_label(listInst)
     False"""
-    raise NotImplementedError
+    tw = 0
+    fw = 0
+    for inst in listInst:
+      if inst.fLabel:
+        tw += inst.dblWeight
+      else:
+        fw += inst.dblWeight
+    if tw>fw:
+      return True
+    return False
 
 class DTree(object):
     def __init__(self, fLabel=None, ixAttr=None, fDefaultLabel=None):
@@ -214,6 +223,21 @@ def build_tree_rec(setIxAttr, listInst, dblMinGain, cRemainingLevels):
     When building tree nodes, the function specifies the majority label across
     listInst as the node's default label (fDefaultLabel argument to DTree's
     __init__). This will be useful in pruning."""
+    if check_for_common_label(listInst) != None:
+      return DTree(fLabel=check_for_common_label(listInst))
+    if len(setIxAttr) == 0:
+      return DTree(fLabel = majority_label(listInst))
+    if cRemainingLevels == 0:
+      return DTree(fLabel = majority_label(listInst))
+    attr, dict = choose_split_attribute(setIxAttr, listInst, dblMinGain)
+    if attr == None:
+      return DTree(fLabel = majority_label(listInst))
+    else:
+      d = DTree(ixAttr = attr, fDefaultLabel = majority_label(listInst))
+      setIxPrime = list(setIxAttr).remove(attr)
+      for k,v in dict.iteritems():
+        d.add(build_tree_rec(setIxPrime,v,dblMinGain, cRemainingLevels-1), k)
+      return d
     raise NotImplementedError
 
 def count_instance_attributes(listInst):
