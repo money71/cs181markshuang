@@ -229,13 +229,14 @@ def build_tree_rec(setIxAttr, listInst, dblMinGain, cRemainingLevels):
       return DTree(fLabel = majority_label(listInst))
     if cRemainingLevels == 0:
       return DTree(fLabel = majority_label(listInst))
-    attr, dict = choose_split_attribute(setIxAttr, listInst, dblMinGain)
+    attr, newdict = choose_split_attribute(setIxAttr, listInst, dblMinGain)
     if attr == None:
       return DTree(fLabel = majority_label(listInst))
     else:
       d = DTree(ixAttr = attr, fDefaultLabel = majority_label(listInst))
-      setIxPrime = list(setIxAttr).remove(attr)
-      for k,v in dict.iteritems():
+      setIxPrime = set(setIxAttr) - set([attr])
+      #print attr, setIxAttr, setIxPrime
+      for k,v in newdict.iteritems():
         d.add(build_tree_rec(setIxPrime,v,dblMinGain, cRemainingLevels-1), k)
       return d
     raise NotImplementedError
