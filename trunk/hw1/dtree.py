@@ -358,9 +358,9 @@ def check_folds(listInst, cFold, cMinFold):
     ...
     ValueError: Need at least 2 folds."""
     if cfold > len(listInst):
-        raise ValueError("Cannot have more folds than instances")
+        raise ValueError('Cannot have more folds than instances')
     if cFold < cMinFold:
-        raise ValueError("Need at least 2 folds")
+        raise ValueError('Need at least %d folds' % (cMinFold))
 
 def yield_cv_folds(listInst, cFold):
     """Yield a series of TreeFolds, which represent a partition of listInst
