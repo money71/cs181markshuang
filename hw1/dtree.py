@@ -239,7 +239,6 @@ def build_tree_rec(setIxAttr, listInst, dblMinGain, cRemainingLevels):
       for k,v in newdict.iteritems():
         d.add(build_tree_rec(setIxPrime,v,dblMinGain, cRemainingLevels-1), k)
       return d
-    raise NotImplementedError
 
 def count_instance_attributes(listInst):
     """Return the number of attributes across all instances, or None if the
@@ -293,7 +292,13 @@ def weight_correct_incorrect(rslt):
     >>> rslt = EvaluationResult(listInstCorrect, listInstIncorrect, None)
     >>> weight_correct_incorrect(rslt)
     (0.25, 0.5)"""
-    raise NotImplementedError
+    c = 0
+    i = 0
+    for inst in rslt.listInstCorrect:
+        c += inst.dblWeight
+    for inst in rslt.listInstIncorrect:
+        i += inst.dblWeight
+    return c, i
 
 class CrossValidationFold(object):
     def build(self):
@@ -328,7 +333,16 @@ def evaluate_classification(cvf):
     Evaluation results are built with
     EvaluationResult(listInstCorrect,listInstIncorrect,dt)
     where dt is the classifier built with cvf.build()."""
-    raise NotImplementedError
+    lc = []
+    li = []
+    dt = cvf.build()
+    for inst in cvf.listInstTest:
+        if cvf.classify(dt,inst) == inst.fLabel:
+            lc.append(inst)
+        else:
+            li.append(inst)
+    evalRslt = EvaluationResult(lc,li,dt)
+    return evalRslt
 
 def check_folds(listInst, cFold, cMinFold):
     """Raise a ValueError if cFold is greater than the number of instances, or
@@ -343,7 +357,10 @@ def check_folds(listInst, cFold, cMinFold):
     Traceback (most recent call last):
     ...
     ValueError: Need at least 2 folds."""
-    raise NotImplementedError
+    if cfold > len(listInst):
+        raise ValueError("Cannot have more folds than instances")
+    if cFold < cMinFold:
+        raise ValueError("Need at least 2 folds")
 
 def yield_cv_folds(listInst, cFold):
     """Yield a series of TreeFolds, which represent a partition of listInst
