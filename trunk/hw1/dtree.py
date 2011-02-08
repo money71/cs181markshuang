@@ -102,7 +102,7 @@ def choose_split_attribute(iterableIxAttr, listInst, dblMinGain=0.0):
       if gain >= bestgain and gain>=dblMinGain:
         bestattr = attr
         bestgain = gain
-    if bestattr == None:
+    if bestattr is None:
       return None, None
     return bestattr, separate_by_attribute(listInst,bestattr)
 
@@ -117,7 +117,7 @@ def check_for_common_label(listInst):
     >>> check_for_common_label([Instance([],True), Instance([],False)])"""
     val = None
     for inst in listInst:
-      if val == None:
+      if val is None:
         val = inst.fLabel
       if val != inst.fLabel:
         return None
@@ -225,12 +225,12 @@ def build_tree_rec(setIxAttr, listInst, dblMinGain, cRemainingLevels):
     __init__). This will be useful in pruning."""
     if check_for_common_label(listInst) != None:
       return DTree(fLabel=check_for_common_label(listInst))
-    if setIxAttr == None:
+    if setIxAttr is None:
       return DTree(fLabel = majority_label(listInst))
     if cRemainingLevels == 0:
       return DTree(fLabel = majority_label(listInst))
     attr, newdict = choose_split_attribute(setIxAttr, listInst, dblMinGain)
-    if attr == None:
+    if attr is None:
       return DTree(fLabel = majority_label(listInst))
     else:
       d = DTree(ixAttr = attr, fDefaultLabel = majority_label(listInst))
@@ -251,7 +251,7 @@ def count_instance_attributes(listInst):
     """
     i = None
     for inst in listInst:
-        if i == None:
+        if i is None:
             i = len(inst.listAttrs)
         elif i != len(inst.listAttrs):
             return None
@@ -400,14 +400,33 @@ def prune_tree(dt, listInst):
 
     The function does not return anything, and instead modifies the tree
     in-place."""
-    raise NotImplementedError
+    score = 0
+    scorePruned = 0
+    dictInst = separate_by_attribute(listInst,dt.ixAttr)
+    for v, listInstChild in dictInst.iteritems():
+        if dt.dictChildren.has_key(v):
+            if dt.dictChildren[v].is_leaf():
+                continue
+            prune_tree(dt.dictChildren[v],listInstChild)
+    for inst in listInst:
+        if classify(dt,inst) == inst.fLabel:
+            score += inst.dblWeight
+        if dt.fDefaultLabel == inst.fLabel:
+            scorePruned += inst.dblWeight
+    if scorePruned >= score:
+        #print 'pruning happened %d %d' % (scorePruned, score)
+        dt.convert_to_leaf()
+    #else:
+        #print 'pruning did not happen %d %d' % (scorePruned, score)
 
 def build_pruned_tree(listInstTrain, listInstValidate):
     """Build a pruned decision tree from a list of training instances, then
     prune the tree using a list of validation instances.
 
     Return the pruned decision tree."""
-    raise NotImplementedError
+    dt = build_tree(listInstTrain)
+    prune_tree(dt, listInstValidate)
+    return dt
 
 class PrunedFold(TreeFold):
     def __init__(self, *args, **kwargs):
@@ -423,7 +442,23 @@ def yield_cv_folds_with_validation(listInst, cFold):
     the list of instances listInst.
 
     You may either return a list or yield successive values."""
-    raise NotImplementedError
+    n = len(listInst)
+    foldsize = int(math.ceil(n / cFold))
+    ret = []
+    for i in range(0,cFold):
+      ind1 = i * foldsize
+      ind2 = min(n, (i+1) * foldsize)
+      test = listInst[ind1:ind2]
+      if ind2 == n:
+        validate = listInst[0:foldsize]
+        training = listInst[foldsize:ind1]
+      else:
+        ind3 = min(n, ind2+foldsize)
+        validate = listInst[ind2:ind3]
+        training = listInst[:ind1]
+        training.extend(listInst[ind3:])
+      ret.append(PrunedFold(training, test, validate))
+    return ret
 
 def normalize_weights(listInst):
     """Normalize the weights of all the instances in listInst so that the sum
