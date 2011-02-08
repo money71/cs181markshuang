@@ -368,12 +368,28 @@ def yield_cv_folds(listInst, cFold):
 
     You may either return a list, or `yield` (http://goo.gl/gwOfM)
     TreeFolds one at a time."""
-    raise NotImplementedError
+    n = len(listInst)
+    foldsize = int(math.ceil(n / cFold))
+    ret = []
+    for i in range(0,cFold):
+      ind1 = i * foldsize
+      ind2 = min(n, (i+1) * foldsize)
+      test = listInst[ind1:ind2]
+      training = listInst[:ind1]
+      training.extend(listInst[ind2:])
+      ret.append(TreeFold(training, test))
+    return ret
 
 def cv_score(iterableFolds):
     """Determine the fraction (by weight) of correct instances across a number
     of cross-validation folds."""
-    raise NotImplementedError
+    c = 0.0
+    i = 0.0
+    for fold in iterableFolds:
+      cp,ip = weight_correct_incorrect(evaluate_classification(fold))
+      c+=cp
+      i+=ip
+    return c/(c+i)
 
 def prune_tree(dt, listInst):
     """Recursively prune a decision tree.
