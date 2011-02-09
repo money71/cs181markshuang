@@ -184,6 +184,16 @@ class EntropyTest(unittest.TestCase):
         fMajorityLabel = dtree.majority_label(listInstAll)
         self.assertEqual(dblT > dblF, fMajorityLabel)        
 
+def check_dt_members(dt):
+    if dt.is_leaf() and dt.is_node():
+        return False, ("Tree is not clearly a leaf or node. Only one"
+                       " of fLabel and ixAttr should be not None.")
+    for cValue,dtChild in dt.dictChildren.iteritems():
+        fSuccess,sMsg = check_dt_members(dtChild)
+        if not fSuccess:
+            return fSuccess,sMsg
+    return True,None
+
 class ConstructionTest(unittest.TestCase):
     def check_dt(self,dtRoot,cMaxLevel):
         def down(dt,cLvl):
@@ -193,11 +203,16 @@ class ConstructionTest(unittest.TestCase):
                     down(dtChild,cLvl+1)
         down(dtRoot,0)
 
+    def assert_dt_members(self,dt):
+        fSuccess,sMsg = check_dt_members(dt)
+        self.assertTrue(fSuccess, sMsg)
+
     @repeated
     def test_build_tree_rec_leaf(self):
         fLabel = randbool()
         listInst = [dtree.Instance([],fLabel)]*random.randint(1,3)
         dt = dtree.build_tree_rec([],listInst,0.0,-1)
+        self.assert_dt_members(dt)
         self.assertTrue(dt.is_leaf(), "dt was not a leaf")
         self.assertEqual(dt.fLabel, fLabel)
 
@@ -211,6 +226,7 @@ class ConstructionTest(unittest.TestCase):
         setIxAttr = set(range(2))
         cPrevSetIxAttrLen = len(setIxAttr)
         dt = dtree.build_tree_rec(setIxAttr, listInst, 0.0,-1)
+        self.assert_dt_members(dt)
         self.assertEqual(cPrevSetIxAttrLen, len(setIxAttr),
                          "setIxAttr changed size in build_tree_rec")
         self.assertTrue(dt.is_node(), "dt was not a node")
@@ -227,6 +243,7 @@ class ConstructionTest(unittest.TestCase):
         listInst = fxnGen(100)
         cMaxLevel = random.randint(0,3)
         dt = dtree.build_tree(listInst, cMaxLevel=cMaxLevel)
+        self.assert_dt_members(dt)
         self.check_dt(dt,cMaxLevel)
 
     @repeated
@@ -239,6 +256,7 @@ class ConstructionTest(unittest.TestCase):
             fLabel = bool(listAttr[ixAttrImportant])
             listInst.append(dtree.Instance(listAttr,fLabel))
         dt = dtree.build_tree(listInst, dblMinGain=0.55)
+        self.assert_dt_members(dt)
         self.assertTrue(dt.is_node())
         self.check_dt(dt,1)        
 
@@ -391,7 +409,7 @@ class EvaluationTest(unittest.TestCase):
         self.assertAlmostEqual(dblCorrect,dblC)
         self.assertAlmostEqual(dblIncorrect,dblI)
 
-def build_foldable_instances(lo=2,hi=6):
+def build_foldable_instances(lo=3,hi=10):
     cFold = random.randint(lo,hi)
     cInsts = random.randint(1,10)*cFold
     return [dtree.Instance([i],randbool()) for i in range(cInsts)],cFold
@@ -399,8 +417,9 @@ def build_foldable_instances(lo=2,hi=6):
 def build_folded_set(listInst):
     return set([inst.listAttrs[0] for inst in listInst])
 
-def is_valid_cvf_builder(fxnBuildCvf, fxnCheckEach):
+def is_valid_cvf_builder(obj, fxnBuildCvf, fxnCheckEach, fUseValidation):
     listInst,cFold = build_foldable_instances()
+    cFoldSize = len(listInst)/cFold
     setI = build_folded_set(listInst)
     cFoldsYielded = 0
     for cvf in fxnBuildCvf(list(listInst),cFold):
@@ -408,10 +427,18 @@ def is_valid_cvf_builder(fxnBuildCvf, fxnCheckEach):
             return False
         setTrain = build_folded_set(cvf.listInstTraining)
         setTest = build_folded_set(cvf.listInstTest)
-        if setI - setTrain != setTest:
-            return False
-        if setI - setTest != setTrain:
-            return False
+        setValidation = (build_folded_set(cvf.listInstValidate)
+                         if fUseValidation else set())
+        obj.assertEqual(cFoldSize, len(setTest))
+        if fUseValidation:
+            obj.assertEqual(cFoldSize, len(setTest))
+            cFoldsInTraining = cFold - 2
+        else:
+            cFoldsInTraining = cFold - 1
+        obj.assertEqual(cFoldSize*cFoldsInTraining, len(setTrain))
+        obj.assertEqual(setI - setTrain - setValidation, setTest)
+        obj.assertEqual(setI - setTest - setValidation, setTrain)
+        obj.assertEqual(setI - setTrain - setTest, setValidation)
         cFoldsYielded += 1
     return cFold == cFoldsYielded
 
@@ -421,7 +448,7 @@ class CrossValidationTest(unittest.TestCase):
     @repeated
     def test_yield_cv_folds(self):
         fxnCheck = lambda cvf: isinstance(cvf, dtree.TreeFold)
-        self.assertTrue(is_valid_cvf_builder(dtree.yield_cv_folds, fxnCheck))
+        is_valid_cvf_builder(self, dtree.yield_cv_folds, fxnCheck,False)
         
     @repeated
     def test_cv_score(self):
@@ -451,23 +478,9 @@ class CrossValidationTest(unittest.TestCase):
 
     @repeated
     def test_yield_cv_folds_with_validation(self):
-        listInst,cFold = build_foldable_instances(lo=3)
-        setI = build_folded_set(listInst)
-        cFoldsYielded = 0
-        setSeenTest = set()
-        for cvf in dtree.yield_cv_folds_with_validation(listInst,cFold):
-            self.assertTrue(isinstance(cvf,dtree.PrunedFold))
-            setTrain = build_folded_set(cvf.listInstTraining)
-            setTest = build_folded_set(cvf.listInstTest)
-            setValid = build_folded_set(cvf.listInstValidate)
-            tupleKey = tuple(setTest)
-            self.assertFalse(tupleKey in setSeenTest)
-            setSeenTest.add(tupleKey)
-            self.assertEqual(setI - setTest, setTrain.union(setValid))
-            self.assertEqual(setI - setTrain, setTest.union(setValid))
-            self.assertEqual(setI - setValid, setTrain.union(setTest))
-            cFoldsYielded += 1
-        self.assertEqual(cFold, cFoldsYielded)
+        fxnCheck = lambda cvf: isinstance(cvf, dtree.PrunedFold)
+        is_valid_cvf_builder(self, dtree.yield_cv_folds_with_validation,
+                             fxnCheck, True)
 
 class PruneTest(unittest.TestCase):
     REPEAT = 10
@@ -666,8 +679,7 @@ class BoostTest(unittest.TestCase):
     @repeated
     def test_yield_boosted_folds(self):
         fxnCheck = lambda cvf: isinstance(cvf,dtree.BoostedFold)
-        self.assertTrue(is_valid_cvf_builder(dtree.yield_boosted_folds,
-                                             fxnCheck))
+        is_valid_cvf_builder(self, dtree.yield_boosted_folds, fxnCheck, False)
         
 if __name__ == "__main__":
     import sys
