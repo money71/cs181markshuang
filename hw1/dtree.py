@@ -357,10 +357,11 @@ def check_folds(listInst, cFold, cMinFold):
     Traceback (most recent call last):
     ...
     ValueError: Need at least 2 folds."""
-    if cfold > len(listInst):
+    if cFold > len(listInst):
         raise ValueError('Cannot have more folds than instances')
     if cFold < cMinFold:
         raise ValueError('Need at least %d folds' % (cMinFold))
+    return
 
 def yield_cv_folds(listInst, cFold):
     """Yield a series of TreeFolds, which represent a partition of listInst
@@ -368,6 +369,7 @@ def yield_cv_folds(listInst, cFold):
 
     You may either return a list, or `yield` (http://goo.gl/gwOfM)
     TreeFolds one at a time."""
+    check_folds(listInst, cFold, 2)
     n = len(listInst)
     foldsize = int(math.ceil(n / cFold))
     ret = []
@@ -414,10 +416,8 @@ def prune_tree(dt, listInst):
         if dt.fDefaultLabel == inst.fLabel:
             scorePruned += inst.dblWeight
     if scorePruned >= score:
-        #print 'pruning happened %d %d' % (scorePruned, score)
         dt.convert_to_leaf()
-    #else:
-        #print 'pruning did not happen %d %d' % (scorePruned, score)
+    return
 
 def build_pruned_tree(listInstTrain, listInstValidate):
     """Build a pruned decision tree from a list of training instances, then
@@ -442,6 +442,7 @@ def yield_cv_folds_with_validation(listInst, cFold):
     the list of instances listInst.
 
     You may either return a list or yield successive values."""
+    check_folds(listInst, cFold, 3)
     n = len(listInst)
     foldsize = int(math.ceil(n / cFold))
     ret = []
@@ -474,11 +475,9 @@ def normalize_weights(listInst):
     t=0
     for i in listInst:
       t+=i.dblWeight
-    ret = []
     for i in listInst:
       i.dblWeight = i.dblWeight/t
-      ret.append(i)
-    return ret
+    return
 
 def init_weights(listInst):
     """Initialize the weights of the instances in listInst so that each
@@ -489,11 +488,10 @@ def init_weights(listInst):
     >>> init_weights(listInst)
     >>> print listInst
     [Instance([], True, 0.50), Instance([], True, 0.50)]"""
-    w = 1.0/len(listInst)
     for i in listInst:
-      i.dblWeight=w
+      i.dblWeight=1.0
+    normalize_weights(listInst)
     return
-    raise NotImplementedError
 
 def classifier_error(rslt):
     """Given and evaluation result, return the (floating-point) fraction
@@ -517,7 +515,7 @@ def update_weight_unnormalized(inst, dblClassifierWeight, fClassifiedLabel):
     assigned to the instance by the classifier. This function acts in place
     and does not return anything."""
     if inst.fLabel == fClassifiedLabel:
-      inst.dblWeight = inst.dblWeight * math.exp(-1.0*dblClassifierWeight)
+      inst.dblWeight = inst.dblWeight * math.exp(-dblClassifierWeight)
     else:
       inst.dblWeight = inst.dblWeight * math.exp(dblClassifierWeight)
     return
