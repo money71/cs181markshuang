@@ -471,7 +471,14 @@ def normalize_weights(listInst):
     >>> normalize_weights(listInst)
     >>> print listInst
     [Instance([], True, 0.25), Instance([], False, 0.75)]"""
-    raise NotImplementedError
+    t=0
+    for i in listInst:
+      t+=i.dblWeight
+    ret = []
+    for i in listInst:
+      i.dblWeight = i.dblWeight/t
+      ret.append(i)
+    return ret
 
 def init_weights(listInst):
     """Initialize the weights of the instances in listInst so that each
@@ -482,6 +489,10 @@ def init_weights(listInst):
     >>> init_weights(listInst)
     >>> print listInst
     [Instance([], True, 0.50), Instance([], True, 0.50)]"""
+    w = 1.0/len(listInst)
+    for i in listInst:
+      i.dblWeight=w
+    return
     raise NotImplementedError
 
 def classifier_error(rslt):
@@ -493,18 +504,23 @@ def classifier_error(rslt):
     >>> rslt = EvaluationResult(listInstCorrect,listInstIncorrect,None)
     >>> classifier_error(rslt)
     0.75"""
-    raise NotImplementedError
+    c, i = weight_correct_incorrect(rslt)
+    return i / (c+i)
 
 def classifier_weight(dblError):
     """Return the classifier weight alpha from the classifier's training
     error."""
-    raise NotImplementedError
+    return .5 * math.log((1-dblError) / dblError)
 
 def update_weight_unnormalized(inst, dblClassifierWeight, fClassifiedLabel):
     """Re-weight an instance given the classifier weight, and the label
     assigned to the instance by the classifier. This function acts in place
     and does not return anything."""
-    raise NotImplementedError
+    if inst.fLabel == fClassifiedLabel:
+      inst.dblWeight = inst.dblWeight * math.exp(-1.0*dblClassifierWeight)
+    else:
+      inst.dblWeight = inst.dblWeight * math.exp(dblClassifierWeight)
+    return
 
 class StumpFold(TreeFold):
     def __init__(self, listInstTraining, cMaxLevel=1):
