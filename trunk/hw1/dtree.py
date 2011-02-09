@@ -546,7 +546,18 @@ def one_round_boost(listInst, cMaxLevel):
     - return the EvaluationResult's oClassifier member, the classifier error,
       and the classifier weight in a 3-tuple
     - remember to return early if the error is zero."""
-    raise NotImplementedError
+    sf = StumpFold(listInst, cMaxLevel)
+    eRslt = evaluate_classification(sf)
+    e = classifier_error(eRslt)
+    if e == 0:
+        return eRslt.oClassifier, 0, 1
+    w = classifier_weight(e)
+    for inst in eRslt.listInstCorrect:
+        update_weight_unnormalized(inst, w, inst.fLabel)
+    for inst in eRslt.listInstIncorrect:
+        update_weight_unnormalized(inst, w, not inst.fLabel)
+    normalize_weights(listInst)
+    return eRslt.oClassifier, e, w
 
 class BoostResult(object):
     def __init__(self, listDblCferWeight, listCfer):
@@ -556,12 +567,28 @@ class BoostResult(object):
 def boost(listInst, cMaxRounds=50, cMaxLevel=1):
     """Conduct up to cMaxRounds of boosting on training instances listInst
     and return a BoostResult containing the classifiers and their weights."""
-    raise NotImplementedError
+    init_weights(listInst)
+    lw = []
+    lc = []
+    for k in range (0,cMaxRounds):
+        c,e,w = one_round_boost(listInst, cMaxLevel)
+        if e == 0:
+            lc = [c]
+            lw = [w]
+        else:
+            lc.append(c)
+            lw.append(w)
+    return BoostResult(lw,lc)
+        
 
 def classify_boosted(br,inst):
     """Given a BoostResult and an instance, return the (boolean) label
     predicted for the instance by the boosted classifier."""
-    raise NotImplementedError
+    result = 0
+    for i in range (0,len(br.listCfer)):
+        result += br.listDblCferWeight[i]*(classify(br.listCfer[i],inst)-0.5)
+    return result >= 0
+        
 
 class BoostedFold(TreeFold):
     def __init__(self, *args, **kwargs):
@@ -580,7 +607,11 @@ def yield_boosted_folds(listInst, cFold):
 
     Implementation suggestion: Generate TreeFolds, and yield BoostedFolds
     built from your TreeFolds."""
-    raise NotImplementedError
+    listBf = []
+    listTf = yield_cv_folds(listInst, cFold)
+    for tf in listTf:
+        listBf.append(BoostedFold(tf.listInstTraining,tf.listInstTest))
+    return listBf
 
 def read_csv_dataset(infile):
     listInst = []
