@@ -100,7 +100,7 @@ def output_error(dblActivation,dblTarget):
 
     >>> output_error(0.75, -1.0) # yes, it's this simple.
     -1.75"""
-    raise NotImplementedError
+    return dblTarget - dblActivation
 
 def hidden_error(listDblDownstreamDelta, pcpt, layerNext):
     """Determines the error on a hidden node from, its downstream deltas,
@@ -114,7 +114,14 @@ def hidden_error(listDblDownstreamDelta, pcpt, layerNext):
     >>> layer = NeuralNetLayer(1, listPcpt)
     >>> hidden_error([1.0, 0.75], pcpt, layer)
     3.0"""
-    raise NotImplementedError
+    err = 0
+    j = pcpt.ix
+    for k in range(len(listDblDownstreamDelta)):
+      thiserr = listDblDownstreamDelta[k] * layerNext.listPcpt[k].listDblW[j]
+      print k, thiserr
+      err += thiserr
+    return err
+    
 
 def compute_delta(dblActivation, dblError):
     """Computes a delta value from activation and error.
