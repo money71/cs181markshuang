@@ -172,6 +172,7 @@ def pcpt_activation(pcpt, listDblInput):
     >>> pcpt = Perceptron([0.5,0.5,-1.5], 0.75, 0)
     >>> pcpt_activation(pcpt, [0.5,1.0,1.0])
     0.5"""
+    print pcpt.listDblW, listDblInput
     return sigmoid(dot(pcpt.listDblW,listDblInput)+pcpt.dblW0)
 
 def feed_forward_layer(layer, listDblInput):
@@ -235,6 +236,7 @@ def build_layer_inputs_and_outputs(net, listDblInput):
     listIn = [listDblInput]
     listOut = []
     for layer in net.listLayer:
+        print "build_layer ", layer, listIn[-1]
         listIn.append(feed_forward_layer(layer, listIn[-1]))
         listOut.append(listIn[-1])
     listIn.pop()
@@ -366,18 +368,22 @@ def update_net(net, inst, dblLearningRate, listTargetOutputs):
     This function returns the list of outputs after feeding forward.  Weight
     updates are done in place.
     """
-    ins, outs = build_layer_inputs_and_outputs(net, inst)         
+    ins, outs = build_layer_inputs_and_outputs(net, inst.listDblFeatures)         
     layer_errors = []
-    err = output_error(outs[-1],listTargetOutputs)
-    revlist =  range(0,len(net.listLayer)-1).reverse()
+    err = []
+    for i in range(len(outs[-1])):
+      err.append(output_error(outs[-1][i],listTargetOutputs[i]))
+    revlist =  range(0,len(net.listLayer)-1)
+    revlist.reverse()
     delta_list = []
     for i in revlist:
+      print i
       ld = layer_deltas(outs[i],err)
       delta_list.insert(0,ld)
       err = hidden_layer_error(net.listLayer[i],ld,net.listLayer[i+1])
     for i in range(len(net.listLayer)):
       update_layer(net.listLayer[i],ins[i],delta_list[i], dblLearningRate)
-    ins, outs = build_layer_inputs_and_outputs(net, inst)         
+    ins, outs = build_layer_inputs_and_outputs(net, inst.listDblFeatures)         
     return outs[-1]
 
 def init_net(listCLayerSize, dblScale=0.01):
