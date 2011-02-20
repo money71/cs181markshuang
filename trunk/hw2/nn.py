@@ -310,7 +310,7 @@ class ImageInstance(Instance):
         pass
 
 def distributed_encode_label(iLabel):
-    """Generate a distributed encoding of the integer label iLabel.
+    """Generate a dilayerstributed encoding of the integer label iLabel.
     The label will always be between 0 and 9, inclusive.
 
     >>> listDblEncoding = distributed_encode_label(2)
@@ -366,7 +366,7 @@ def update_net(net, inst, dblLearningRate, listTargetOutputs):
     This function returns the list of outputs after feeding forward.  Weight
     updates are done in place.
     """
-    raise NotImplementedError
+    
 
 def init_net(listCLayerSize, dblScale=0.01):
     """Build an artificial neural network and initialize its weights
@@ -382,7 +382,25 @@ def init_net(listCLayerSize, dblScale=0.01):
     connected to the next.
 
     This function should return the network."""
-    raise NotImplementedError
+    listLayer = []
+    for i in range(len(listCLayerSize)-1):
+        listPcpt = []
+        for j in range(listCLayerSize[i+1]):
+            listDblW = random_list(listCLayerSize[i], dblScale)
+            dblW0 = random_weight(dblScale)
+            pcpt = Perceptron(listDblW, dblW0, j)
+            listPcpt.append(pcpt)
+        listLayer.append(NeuralNetLayer(listCLayerSize[i],listPcpt))
+    return NeuralNet(listCLayerSize[0], listLayer)
+    
+def random_weight(dblScale):
+    return dblScale*(random.random()*2 - 1)
+
+def random_list(size, dblScale):
+    ret = []
+    for i in range(size):
+        ret.append(random_weight(dblScale))
+    return ret
 
 def load_data(sFilename, cMaxInstances=None):
     """Load at most cMaxInstances instances from sFilename, or all instance
