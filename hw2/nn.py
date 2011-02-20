@@ -172,7 +172,7 @@ def pcpt_activation(pcpt, listDblInput):
     >>> pcpt = Perceptron([0.5,0.5,-1.5], 0.75, 0)
     >>> pcpt_activation(pcpt, [0.5,1.0,1.0])
     0.5"""
-    return sigmoid(dot(pcpt.listDblW,listDblInput))
+    return sigmoid(dot(pcpt.listDblW,listDblInput)+pcpt.dblW0)
 
 def feed_forward_layer(layer, listDblInput):
     """Build a list of activation levels for the perceptrons
@@ -184,7 +184,10 @@ def feed_forward_layer(layer, listDblInput):
     >>> listDblInput = [0.5, 0.25]
     >>> feed_forward_layer(layer, listDblInput)
     [0.5, 0.5]"""
-    raise NotImplementedError
+    ret = []
+    for pcpt in layer.listPcpt:
+        ret.append(pcpt_activation(pcpt, listDblInput))
+    return ret
 
 class NeuralNet(object):
     """An artificial neural network."""
@@ -241,7 +244,10 @@ def layer_deltas(listDblActivation, listDblError):
 
     >>> layer_deltas([0.5, 0.25], [0.125, 0.0625])
     [0.03125, 0.01171875]"""
-    raise NotImplementedError
+    ret = []
+    for i in range(len(listDblActivation)):
+        ret.append(compute_delta(listDblActivation[i],listDblError[i]))
+    return ret
 
 def update_layer(layer, listDblInputs, listDblDelta,  dblLearningRate):
     """Update all perceptrons in the neural net layer.
@@ -270,7 +276,10 @@ def hidden_layer_error(layer, listDblDownstreamDelta, layerDownstream):
     >>> layerDownstream = NeuralNetLayer(2, [Perceptron([0.75,0.25], 0.0, 0)])
     >>> hidden_layer_error(layer, [2.0], layerDownstream)
     [1.5, 0.5]"""
-    raise NotImplementedError
+    ret = []
+    for pcpt in layer.listPcpt:
+        ret.append(hidden_error(listDblDownstreamDelta,pcpt,layerDownstream))
+    return ret
 
 class Instance(object):
     def __init__(self, iLabel, listDblFeatures):
