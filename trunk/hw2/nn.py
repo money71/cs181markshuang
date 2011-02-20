@@ -118,7 +118,6 @@ def hidden_error(listDblDownstreamDelta, pcpt, layerNext):
     j = pcpt.ix
     for k in range(len(listDblDownstreamDelta)):
       thiserr = listDblDownstreamDelta[k] * layerNext.listPcpt[k].listDblW[j]
-      print k, thiserr
       err += thiserr
     return err
     
@@ -161,7 +160,11 @@ def update_pcpt(pcpt, listDblInputs, dblDelta, dblLearningRate):
     >>> update_pcpt(pcpt, [0.5,0.5,0.5], 0.25, 2.0)
     >>> print pcpt
     Perceptron([1.25, 2.25, 3.25], 4.5, 0)"""
-    raise NotImplementedError
+    for j in range(len(listDblInputs)):
+        pcpt.listDblW[j] = update_weight(pcpt.listDblW[j],\
+            dblLearningRate,listDblInputs[j],dblDelta)
+    pcpt.dblW0 = update_weight(pcpt.dblW0,dblLearningRate,1,dblDelta)
+    
 
 def pcpt_activation(pcpt, listDblInput):
     """Compute a perceptron's activation function.
