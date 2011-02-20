@@ -366,7 +366,19 @@ def update_net(net, inst, dblLearningRate, listTargetOutputs):
     This function returns the list of outputs after feeding forward.  Weight
     updates are done in place.
     """
-    
+    ins, outs = build_layer_inputs_and_outputs(net, inst)         
+    layer_errors = []
+    err = output_error(outs[-1],listTargetOutputs)
+    revlist =  range(0,len(net.listLayer)-1).reverse()
+    delta_list = []
+    for i in revlist:
+      ld = layer_deltas(outs[i],err)
+      delta_list.insert(0,ld)
+      err = hidden_layer_error(net.listLayer[i],ld,net.listLayer[i+1])
+    for i in range(len(net.listLayer)):
+      update_layer(net.listLayer[i],ins[i],delta_list[i], dblLearningRate)
+    ins, outs = build_layer_inputs_and_outputs(net, inst)         
+    return outs[-1]
 
 def init_net(listCLayerSize, dblScale=0.01):
     """Build an artificial neural network and initialize its weights
