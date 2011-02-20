@@ -172,7 +172,10 @@ def pcpt_activation(pcpt, listDblInput):
     >>> pcpt = Perceptron([0.5,0.5,-1.5], 0.75, 0)
     >>> pcpt_activation(pcpt, [0.5,1.0,1.0])
     0.5"""
-    raise NotImplementedError
+    out = 0
+    for i in range(len(listDblInput))
+      out = out + listDblInput[i] * pcpt.listDblW[i];
+    return out
 
 def feed_forward_layer(layer, listDblInput):
     """Build a list of activation levels for the perceptrons
