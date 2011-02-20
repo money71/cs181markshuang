@@ -20,7 +20,7 @@ def sigmoid(dblX):
     >>> sigmoid(-100.0) < 1.0e-10
     True
     """
-    raise NotImplementedError
+    return 1 / (1 + math.exp(-dblX))
 
 class Perceptron(object):
     """Implements a node in a feed-forward neural network."""
