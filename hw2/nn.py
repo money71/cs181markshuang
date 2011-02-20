@@ -256,7 +256,10 @@ def update_layer(layer, listDblInputs, listDblDelta,  dblLearningRate):
     >>> update_layer(layer, [0.5,-0.5], [2.0,2.0], 0.5) # do the update
     >>> print layer.listPcpt
     [Perceptron([1.5, -1.5], 1.0, 0), Perceptron([-0.5, 0.5], 1.0, 1)]"""
-    raise NotImplementedError
+    for i in range(len(layer.listPcpt)):
+        update_pcpt(layer.listPcpt[i], listDblInputs, listDblDelta[i],\
+            dblLearningRate)
+        
 
 def hidden_layer_error(layer, listDblDownstreamDelta, layerDownstream):
     """Determine the error produced by each node in a hidden layer, given the
