@@ -173,7 +173,7 @@ def pcpt_activation(pcpt, listDblInput):
     >>> pcpt_activation(pcpt, [0.5,1.0,1.0])
     0.5"""
     out = 0
-    for i in range(len(listDblInput))
+    for i in range(len(listDblInput)):
       out = out + listDblInput[i] * pcpt.listDblW[i];
     return out
 
