@@ -116,9 +116,8 @@ def hidden_error(listDblDownstreamDelta, pcpt, layerNext):
     3.0"""
     err = 0
     j = pcpt.ix
-    for k in range(len(listDblDownstreamDelta)):
-      thiserr = listDblDownstreamDelta[k] * layerNext.listPcpt[k].listDblW[j]
-      err += thiserr
+    for k, delta in enumerate(listDblDownstreamDelta):
+        err += delta * layerNext.listPcpt[k].listDblW[j]
     return err
     
 
@@ -160,10 +159,10 @@ def update_pcpt(pcpt, listDblInputs, dblDelta, dblLearningRate):
     >>> update_pcpt(pcpt, [0.5,0.5,0.5], 0.25, 2.0)
     >>> print pcpt
     Perceptron([1.25, 2.25, 3.25], 4.5, 0)"""
-    for j in range(len(listDblInputs)):
-        pcpt.listDblW[j] = update_weight(pcpt.listDblW[j],\
-            dblLearningRate,listDblInputs[j],dblDelta)
-    pcpt.dblW0 = update_weight(pcpt.dblW0,dblLearningRate,1,dblDelta)
+    for j, dblInput in enumerate(listDblInputs):
+        pcpt.listDblW[j] = update_weight(pcpt.listDblW[j], dblLearningRate,\
+            dblInput, dblDelta)
+    pcpt.dblW0 = update_weight(pcpt.dblW0, dblLearningRate, 1, dblDelta)
     
 
 def pcpt_activation(pcpt, listDblInput):
@@ -172,8 +171,7 @@ def pcpt_activation(pcpt, listDblInput):
     >>> pcpt = Perceptron([0.5,0.5,-1.5], 0.75, 0)
     >>> pcpt_activation(pcpt, [0.5,1.0,1.0])
     0.5"""
-    print pcpt.listDblW, listDblInput
-    return sigmoid(dot(pcpt.listDblW,listDblInput)+pcpt.dblW0)
+    return sigmoid(dot(pcpt.listDblW, listDblInput) + pcpt.dblW0)
 
 def feed_forward_layer(layer, listDblInput):
     """Build a list of activation levels for the perceptrons
@@ -236,7 +234,6 @@ def build_layer_inputs_and_outputs(net, listDblInput):
     listIn = [listDblInput]
     listOut = []
     for layer in net.listLayer:
-        print "build_layer ", layer, listIn[-1]
         listIn.append(feed_forward_layer(layer, listIn[-1]))
         listOut.append(listIn[-1])
     listIn.pop()
@@ -253,8 +250,8 @@ def layer_deltas(listDblActivation, listDblError):
     >>> layer_deltas([0.5, 0.25], [0.125, 0.0625])
     [0.03125, 0.01171875]"""
     ret = []
-    for i in range(len(listDblActivation)):
-        ret.append(compute_delta(listDblActivation[i],listDblError[i]))
+    for i, dblActivation in enumerate(listDblActivation):
+        ret.append(compute_delta(dblActivation,listDblError[i]))
     return ret
 
 def update_layer(layer, listDblInputs, listDblDelta,  dblLearningRate):
@@ -270,9 +267,8 @@ def update_layer(layer, listDblInputs, listDblDelta,  dblLearningRate):
     >>> update_layer(layer, [0.5,-0.5], [2.0,2.0], 0.5) # do the update
     >>> print layer.listPcpt
     [Perceptron([1.5, -1.5], 1.0, 0), Perceptron([-0.5, 0.5], 1.0, 1)]"""
-    for i in range(len(layer.listPcpt)):
-        update_pcpt(layer.listPcpt[i], listDblInputs, listDblDelta[i],\
-            dblLearningRate)
+    for i, pcpt in enumerate(layer.listPcpt):
+        update_pcpt(pcpt, listDblInputs, listDblDelta[i], dblLearningRate)
         
 
 def hidden_layer_error(layer, listDblDownstreamDelta, layerDownstream):
@@ -286,7 +282,7 @@ def hidden_layer_error(layer, listDblDownstreamDelta, layerDownstream):
     [1.5, 0.5]"""
     ret = []
     for pcpt in layer.listPcpt:
-        ret.append(hidden_error(listDblDownstreamDelta,pcpt,layerDownstream))
+        ret.append(hidden_error(listDblDownstreamDelta, pcpt, layerDownstream))
     return ret
 
 class Instance(object):
@@ -320,7 +316,9 @@ def distributed_encode_label(iLabel):
     [...]
     >>> print " ".join("%.2f" % dbl for dbl in listDblEncoding)
     0.05 0.05 0.95 0.05 0.05 0.05 0.05 0.05 0.05 0.05"""
-    raise NotImplementedError
+    ret = [.05]*10
+    ret[iLabel] = 0.95
+    return ret
 
 def binary_encode_label(iLabel):
     """Generate a binary encoding of the integer label iLabel.
@@ -333,7 +331,12 @@ def binary_encode_label(iLabel):
 
     >>> print " ".join("%.2f" % dbl for dbl in binary_encode_label(6))
     0.05 0.95 0.95 0.05"""
-    raise NotImplementedError
+    ret = []
+    i = iLabel
+    while i > 0:
+        ret.append(.9*(i % 2) + .05)
+        i = i >> 1
+    return ret
 
 def distributed_decode_net_output(listDblOutput):
     """Decode the output of a neural network with distributed-encoded outputs.
@@ -341,7 +344,13 @@ def distributed_decode_net_output(listDblOutput):
     >>> listDblOutput = [0.23, 0.4, 0.01, 0.2, 0.3, 0.78, 0.51, 0.15, 0.2, 0.1]
     >>> distributed_decode_net_output(listDblOutput)
     5"""
-    raise NotImplementedError
+    m = listDblOutput[0]
+    index = 0
+    for i, x in enumerate(listDblOutput):
+        if x > m:
+            m = x
+            index = i
+    return index
 
 def binary_decode_net_output(listDblOutput):
     """Decode the output of a neural network with binary-encoded outputs.
@@ -352,7 +361,12 @@ def binary_decode_net_output(listDblOutput):
     >>> binary_decode_net_output([0.95, 0.44, 0.01, 0.51])
     9
     """
-    raise NotImplementedError
+    ret = 0
+    for i in listDblOutput:
+        ret = ret << 1
+        if i > 0.5:
+            ret += 1
+    return ret
 
 def update_net(net, inst, dblLearningRate, listTargetOutputs):
     """Update the weights of a neural network using the data in instance inst
@@ -368,23 +382,19 @@ def update_net(net, inst, dblLearningRate, listTargetOutputs):
     This function returns the list of outputs after feeding forward.  Weight
     updates are done in place.
     """
-    ins, outs = build_layer_inputs_and_outputs(net, inst.listDblFeatures)         
-    layer_errors = []
-    err = []
-    for i in range(len(outs[-1])):
-      err.append(output_error(outs[-1][i],listTargetOutputs[i]))
-    revlist =  range(0,len(net.listLayer)-1)
-    revlist.reverse()
-    delta_list = []
-    for i in revlist:
-      print i
-      ld = layer_deltas(outs[i],err)
-      delta_list.insert(0,ld)
-      err = hidden_layer_error(net.listLayer[i],ld,net.listLayer[i+1])
-    for i in range(len(net.listLayer)):
-      update_layer(net.listLayer[i],ins[i],delta_list[i], dblLearningRate)
-    ins, outs = build_layer_inputs_and_outputs(net, inst.listDblFeatures)         
-    return outs[-1]
+    ins, outs = build_layer_inputs_and_outputs(net, inst.listDblFeatures)
+    listDblError = []
+    listDblDelta = []
+    for j, dblActivation in enumerate(outs[-1]):
+        listDblError.append(output_error(dblActivation,listTargetOutputs[j]))
+    listDblDelta.insert(0,layer_deltas(outs[-1], listDblError))
+    for i in range(2, len(net.listLayer)+1):
+        listDblError = hidden_layer_error(net.listLayer[-i], listDblDelta[0],\
+            net.listLayer[-i+1])
+        listDblDelta.insert(0,layer_deltas(outs[-i], listDblError))
+    for i, layer in enumerate(net.listLayer):
+        update_layer(layer,ins[i],listDblDelta[i],dblLearningRate)
+    return feed_forward(net, inst.listDblFeatures)
 
 def init_net(listCLayerSize, dblScale=0.01):
     """Build an artificial neural network and initialize its weights
@@ -412,7 +422,7 @@ def init_net(listCLayerSize, dblScale=0.01):
     return NeuralNet(listCLayerSize[0], listLayer)
     
 def random_weight(dblScale):
-    return dblScale*(random.random()*2 - 1)
+    return dblScale*(2*random.random() - 1)
 
 def random_list(size, dblScale):
     ret = []
