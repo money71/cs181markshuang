@@ -10,6 +10,10 @@ import math
 
 import random
 
+import psyco
+
+psyco.full()
+
 def sigmoid(dblX):
     """The sigmoid function.  Given input dblX, sigmoid(dblX).
 
@@ -333,7 +337,7 @@ def binary_encode_label(iLabel):
     0.05 0.95 0.95 0.05"""
     ret = []
     i = iLabel
-    while i > 0:
+    for j in range(4):
         ret.append(.9*(i % 2) + .05)
         i = i >> 1
     return ret
@@ -362,7 +366,7 @@ def binary_decode_net_output(listDblOutput):
     9
     """
     ret = 0
-    for i in listDblOutput:
+    for i in reversed(listDblOutput):
         ret = ret << 1
         if i > 0.5:
             ret += 1
