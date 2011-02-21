@@ -10,9 +10,9 @@ import math
 
 import random
 
-import psyco
+#import psyco
 
-psyco.full()
+#psyco.full()
 
 def sigmoid(dblX):
     """The sigmoid function.  Given input dblX, sigmoid(dblX).
@@ -241,6 +241,7 @@ def build_layer_inputs_and_outputs(net, listDblInput):
         listIn.append(feed_forward_layer(layer, listIn[-1]))
         listOut.append(listIn[-1])
     listIn.pop()
+    #print listIn, listOut
     return listIn, listOut
 
 def feed_forward(net, listDblInput):
