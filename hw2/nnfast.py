@@ -480,7 +480,7 @@ def experiment(opts):
             if bestVal < validation_correct:
                 bestVal = validation_correct
                 ctr = 0
-            elif ctr > 10 or bestVal > (validation_correct+10):
+            elif ctr > 10 or bestVal > (validation_correct + (200/(ixRound+1))):
                 break
             else:
                 ctr += 1

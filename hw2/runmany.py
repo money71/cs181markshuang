@@ -3,7 +3,7 @@ import os
 from subprocess import *
 
 iterations = 4
-depth = 2
+depth = 3
 rounds = 100
 hidden = 0
 #hiddens = [15,30]
@@ -16,17 +16,17 @@ if __name__=='__main__':
   #for hidden in hiddens:
     for i in range(iterations):
         maxVal = [0, 0, 0.0, 0.0]
-        rate = .2
-        incr = .01
-        #rate = 2
-        #incr = .1
+        #rate = .2
+        #incr = .01
+        rate = 2
+        incr = .1
         for d in range(depth):
             for j in range(20):
                 curMaxVal = [0, 0, 0.0, 0.0]
                 args = ["python", "nnfast.py", "-l", str(rate),
                         "--hidden="+str(hidden), "-n", str(rounds),
-                        "--train=training-9k.txt", "--test=test-1k.txt",
-                        "--validation=validation-1k.txt", "--num_inputs=196",
+                        #"--train=training-9k.txt", "--test=test-1k.txt",
+                        #"--validation=validation-1k.txt", "--num_inputs=196",
                         #"--enable-stopping",
                         "2>&1"]
                 outfile = "%d_hidden%d_rate%f.txt" % (i, hidden, rate)
