@@ -457,6 +457,9 @@ def experiment(opts):
     else:
         encoder = distributed_encode_label
         decoder = distributed_decode_net_output
+    if opts.stopping_condition:
+        bestVal = 0
+        ctr = 0
     for ixRound in xrange(opts.rounds):
         # Compute the error
         errors = 0
@@ -474,11 +477,13 @@ def experiment(opts):
             1 - errors * 1.0 / len(listInstTrain),
             validation_correct * 1.0 / len(listInstVal)))
         if opts.stopping_condition:
-            # TODO(CS181 Student): implement your stopping condition
-            # as described in part 3.4 of the homework instructions.
-            # Don't forget to use --enable-stopping on the command
-            # line to activate the functionality you implement here.
-            print "Implement me!"
+            if bestVal < validation_correct:
+                bestVal = validation_correct
+                ctr = 0
+            elif ctr > 10 or bestVal > (validation_correct+10):
+                break
+            else:
+                ctr += 1
     cCorrect = 0
     for inst in listInstTest:
         listDblOut = build_layer_inputs_and_outputs(net, inst.listDblFeatures)[-1][-1]

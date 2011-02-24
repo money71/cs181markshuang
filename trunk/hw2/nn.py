@@ -556,10 +556,10 @@ def experiment(opts):
             if bestVal < validation_correct:
                 bestVal = validation_correct
                 ctr = 0
+            elif ctr > 10 or bestVal > (validation_correct+10):
+                break
             else:
                 ctr += 1
-            if ctr > 10 or bestVal > (validation_correct+10):
-                break
     cCorrect = 0
     for inst in listInstTest:
         listDblOut = feed_forward(net, inst.listDblFeatures)
