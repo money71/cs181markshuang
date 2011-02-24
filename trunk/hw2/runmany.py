@@ -7,14 +7,16 @@ depth = 3
 rounds = 100
 #hidden = 0
 hiddens = [15,30]
+encoding = ['distributed']
 
 rounds_data = open("00_rounds_data.txt","w")
 
 print "  rate       max"
 rounds_data.write("  rate   rnd     train     valid\n")
 if __name__=='__main__':
-  for hidden in hiddens:
-    for i in range(iterations):
+  for i in range(iterations):
+    for hidden in hiddens:
+      for encode in encoding:
         maxVal = [0, 0, 0.0, 0.0]
         #rate = .2
         #incr = .01
@@ -28,14 +30,15 @@ if __name__=='__main__':
                         "--train=training-9k.txt", "--test=test-1k.txt",
                         "--validation=validation-1k.txt", "--num_inputs=196",
                         "--enable-stopping", "--max-instances=2000",
+                        "--encoding="+encode,
                         "2>&1"]
-                outfile = "%d_hidden%d_rate%f.txt" % (i, hidden, rate)
+                outfile = "%d_hidden%d_%s_rate%f.txt" % (i, hidden, encode, rate)
                 outfd = open(outfile, "w")
-                Popen(args, stderr=outfd,stdout=outfd).communicate()[0]
+                Popen(args, stderr=outfd,stdout=PIPE).communicate()[0]
                 outfd.close()
                 infile = outfile
                 infd = open(infile, "r")
-                for _ in range(6):
+                for _ in range(3):
                     infd.readline()
                 rnd = 0
                 for line in infd:

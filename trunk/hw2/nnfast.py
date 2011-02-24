@@ -460,7 +460,7 @@ def experiment(opts):
     if opts.stopping_condition:
         bestVal = 0
         ctr = 0
-        t = 5*opts.rounds
+        t = 10*opts.rounds
     for ixRound in xrange(opts.rounds):
         # Compute the error
         errors = 0
