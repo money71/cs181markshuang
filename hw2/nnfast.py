@@ -12,18 +12,6 @@ from random import random
 
 from itertools import izip
 
-def sigmoid(dblX):
-    """The sigmoid function.  Given input dblX, sigmoid(dblX).
-
-    >>> sigmoid(0.0)
-    0.5
-    >>> sigmoid(100.0)
-    1.0
-    >>> sigmoid(-100.0) < 1.0e-10
-    True
-    """
-    return 1 / (1 + exp(-dblX))
-
 class Perceptron(object):
     """Implements a node in a feed-forward neural network."""
     def __init__(self, listDblW, dblW0, ix):
@@ -81,29 +69,6 @@ class NeuralNetLayer(object):
                 raise ValueError("Index mismatch. Expected %d but found %d"
                                  % (ix, pcpt.ix))
 
-def dot(listDbl1, listDbl2):
-    """Takes the dot product of two equal-length lists of floats.
-
-    >>> dot([1.0, 2.0, 3.0], [-1.0, 0.25, 4.0])
-    11.5"""
-    if len(listDbl1) != len(listDbl2):
-        raise ValueError("Incompatible lengths")
-    return sum([dbl1*dbl2 for dbl1,dbl2 in izip(listDbl1,listDbl2)])
-
-def output_error(dblActivation,dblTarget):
-    """Computes the output error for perceptron activation level
-    dblActivation and target value dblTarget.
-
-    This is err_k in the lecture notes.
-
-    Getting the sign of the return value of this function incorrect
-    will cause you no end of headaches.  Make sure the order of the variables is
-    correct when you are computing the error.
-
-    >>> output_error(0.75, -1.0) # yes, it's this simple.
-    -1.75"""
-    return dblTarget - dblActivation
-
 def hidden_error(listDblDownstreamDelta, pcpt, layerNext):
     """Determines the error on a hidden node from, its downstream deltas,
     and the weights of its out-edges.
@@ -122,24 +87,6 @@ def hidden_error(listDblDownstreamDelta, pcpt, layerNext):
     for pcpt_k, delta in izip(listPcpt, listDblDownstreamDelta):
         err += pcpt_k.listDblW[j] * delta
     return err
-
-def compute_delta(dblActivation, dblError):
-    """Computes a delta value from activation and error.
-
-    These values are referred to as \delta_j and \delta_k in the
-    lecture notes.
-    >>> compute_delta(0.5,0.5)
-    0.125"""
-    return dblError * dblActivation * (1-dblActivation)
-
-def update_weight(dblW, dblLearningRate, dblInput, dblDelta):
-    """Compute the updated weight from the original weight `dblW`, the
-    learning rate `dblLearningRate`, the input `dblInput` from an upstream
-    node, and the current node's delta `dblDelta`.
-
-    >>> update_weight(3.0, 0.1, 1.25, 2.0)
-    3.25"""
-    return dblW + dblLearningRate * dblInput * dblDelta
 
 def update_pcpt(pcpt, listDblInputs, dblDelta, dblLearningRate):
     """Update the perceptron's weights according to the update rule
@@ -163,17 +110,8 @@ def update_pcpt(pcpt, listDblInputs, dblDelta, dblLearningRate):
     Perceptron([1.25, 2.25, 3.25], 4.5, 0)"""
     listDblW = pcpt.listDblW
     for i, dblInput in enumerate(listDblInputs):
-        listDblW[i] = update_weight(listDblW[i], dblLearningRate, dblInput,
-                                    dblDelta)
-    pcpt.dblW0 = update_weight(pcpt.dblW0, dblLearningRate, 1, dblDelta)
-
-def pcpt_activation(pcpt, listDblInput):
-    """Compute a perceptron's activation function.
-    
-    >>> pcpt = Perceptron([0.5,0.5,-1.5], 0.75, 0)
-    >>> pcpt_activation(pcpt, [0.5,1.0,1.0])
-    0.5"""
-    return sigmoid(dot(pcpt.listDblW, listDblInput) + pcpt.dblW0)
+        listDblW[i] = listDblW[i] + dblLearningRate * dblInput * dblDelta
+    pcpt.dblW0 = pcpt.dblW0 + dblLearningRate * dblDelta
 
 def feed_forward_layer(layer, listDblInput):
     """Build a list of activation levels for the perceptrons
@@ -186,8 +124,9 @@ def feed_forward_layer(layer, listDblInput):
     >>> feed_forward_layer(layer, listDblInput)
     [0.5, 0.5]"""
     ret = []
+    ret_append = ret.append
     for pcpt in layer.listPcpt:
-        ret.append(pcpt_activation(pcpt, listDblInput))
+        ret_append(1 / (1 + exp(-(sum([dbl1*dbl2 for dbl1,dbl2 in izip(pcpt.listDblW, listDblInput)]) + pcpt.dblW0))))
     return ret
 
 class NeuralNet(object):
@@ -235,15 +174,13 @@ def build_layer_inputs_and_outputs(net, listDblInput):
     ([[...], [...]], [[...], [...]])"""
     listIn = [listDblInput]
     listOut = []
+    listIn_append = listIn.append
+    listOut_append = listOut.append
     for layer in net.listLayer:
-        listIn.append(feed_forward_layer(layer, listIn[-1]))
-        listOut.append(listIn[-1])
+        listIn_append(feed_forward_layer(layer, listIn[-1]))
+        listOut_append(listIn[-1])
     listIn.pop()
     return listIn, listOut
-
-def feed_forward(net, listDblInput):
-    """Compute the neural net's output on input listDblInput."""
-    return build_layer_inputs_and_outputs(net, listDblInput)[-1][-1]
 
 def layer_deltas(listDblActivation, listDblError):
     """Compute the delta values for a layer which generated activation levels
@@ -252,25 +189,10 @@ def layer_deltas(listDblActivation, listDblError):
     >>> layer_deltas([0.5, 0.25], [0.125, 0.0625])
     [0.03125, 0.01171875]"""
     ret = []
+    ret_append = ret.append
     for dblActivation, dblError in izip(listDblActivation, listDblError):
-        ret.append(compute_delta(dblActivation,dblError))
+        ret_append(dblError * dblActivation * (1-dblActivation))
     return ret
-
-def update_layer(layer, listDblInputs, listDblDelta,  dblLearningRate):
-    """Update all perceptrons in the neural net layer.
-
-    The function updates the perceptrons in the layer in place, and does
-    not return anything.
-
-    >>> listPcpt = [Perceptron([1.0,-1.0],0.0,0), Perceptron([-1.0,1.0],0.0,1)]
-    >>> layer = NeuralNetLayer(2, listPcpt)
-    >>> print layer.listPcpt
-    [Perceptron([1.0, -1.0], 0.0, 0), Perceptron([-1.0, 1.0], 0.0, 1)]
-    >>> update_layer(layer, [0.5,-0.5], [2.0,2.0], 0.5) # do the update
-    >>> print layer.listPcpt
-    [Perceptron([1.5, -1.5], 1.0, 0), Perceptron([-0.5, 0.5], 1.0, 1)]"""
-    for pcpt, dblDelta in izip(layer.listPcpt, listDblDelta):
-        update_pcpt(pcpt, listDblInputs, dblDelta, dblLearningRate)
 
 def hidden_layer_error(layer, listDblDownstreamDelta, layerDownstream):
     """Determine the error produced by each node in a hidden layer, given the
@@ -282,8 +204,9 @@ def hidden_layer_error(layer, listDblDownstreamDelta, layerDownstream):
     >>> hidden_layer_error(layer, [2.0], layerDownstream)
     [1.5, 0.5]"""
     ret = []
+    ret_append = ret.append
     for pcpt in layer.listPcpt:
-        ret.append(hidden_error(listDblDownstreamDelta, pcpt, layerDownstream))
+        ret_append(hidden_error(listDblDownstreamDelta, pcpt, layerDownstream))
     return ret
 
 class Instance(object):
@@ -387,18 +310,21 @@ def update_net(net, inst, dblLearningRate, listTargetOutputs):
     ins, outs = build_layer_inputs_and_outputs(net, listDblInput)
     listDblError = []
     listLayerDeltas = []
+    listDblError_append = listDblError.append
+    listLayerDeltas_insert = listLayerDeltas.insert
     for dblActivation, dblTarget in izip(outs[-1], listTargetOutputs):
-        listDblError.append(output_error(dblActivation, dblTarget))
-    listLayerDeltas.insert(0, layer_deltas(outs[-1], listDblError))
+        listDblError_append(dblTarget-dblActivation)
+    listLayerDeltas_insert(0, layer_deltas(outs[-1], listDblError))
     listLayer = net.listLayer
     for i in range(2, len(listLayer)+1):
         listDblError = hidden_layer_error(listLayer[-i], listLayerDeltas[0],
                                           listLayer[-i+1])
-        listLayerDeltas.insert(0, layer_deltas(outs[-i], listDblError))
+        listLayerDeltas_insert(0, layer_deltas(outs[-i], listDblError))
     for layer, listDblInputs, listDblDelta in izip(listLayer, ins,
                                                    listLayerDeltas):
-        update_layer(layer, listDblInputs, listDblDelta, dblLearningRate)
-    return feed_forward(net, listDblInput)
+        for pcpt, dblDelta in izip(layer.listPcpt, listDblDelta):
+            update_pcpt(pcpt, listDblInputs, dblDelta, dblLearningRate)
+    return build_layer_inputs_and_outputs(net, listDblInput)[-1][-1]
 
 def init_net(listCLayerSize, dblScale=0.01):
     """Build an artificial neural network and initialize its weights
@@ -415,27 +341,25 @@ def init_net(listCLayerSize, dblScale=0.01):
 
     This function should return the network."""
     listLayer = []
+    listLayer_append = listLayer.append
     for i in range(len(listCLayerSize)-1):
         listPcpt = []
+        listPcpt_append = listPcpt.append
         for j in range(listCLayerSize[i+1]):
             listDblW = random_list(listCLayerSize[i], dblScale)
-            dblW0 = random_weight(dblScale)
+            dblW0 = dblScale*(2*random() - 1)
             pcpt = Perceptron(listDblW, dblW0, j)
-            listPcpt.append(pcpt)
-        listLayer.append(NeuralNetLayer(listCLayerSize[i],listPcpt))
+            listPcpt_append(pcpt)
+        listLayer_append(NeuralNetLayer(listCLayerSize[i],listPcpt))
     return NeuralNet(listCLayerSize[0], listLayer)
-
-def random_weight(dblScale):
-    """Helper function that returns a random weight in the interval
-    (-dblScale,dblScale)."""
-    return dblScale*(2*random() - 1)
 
 def random_list(size, dblScale):
     """Helper function that returns a list of 'size' random weights in the
     interval (-dblScale,dblScale)."""
     ret = []
+    ret_append = ret.append
     for i in range(size):
-        ret.append(random_weight(dblScale))
+        ret_append(dblScale*(2*random() - 1))
     return ret
 
 def load_data(sFilename, cMaxInstances=None):
@@ -486,7 +410,7 @@ def learn_xor():
 def num_correct(net, listInst, decoder):
   cCorrect = 0
   for inst in listInst:
-    listDblOut = feed_forward(net,inst.listDblFeatures)
+    listDblOut = build_layer_inputs_and_outputs(net, inst.listDblFeatures)[-1][-1]
     iGuess = decoder(listDblOut)
     #if opts.fShowGuesses:
     #print inst.iLabel, iGuess
@@ -533,9 +457,6 @@ def experiment(opts):
     else:
         encoder = distributed_encode_label
         decoder = distributed_decode_net_output
-    if opts.stopping_condition:
-        bestVal = 0
-        ctr = 0
     for ixRound in xrange(opts.rounds):
         # Compute the error
         errors = 0
@@ -553,16 +474,14 @@ def experiment(opts):
             1 - errors * 1.0 / len(listInstTrain),
             validation_correct * 1.0 / len(listInstVal)))
         if opts.stopping_condition:
-            if bestVal < validation_correct:
-                bestVal = validation_correct
-                ctr = 0
-            else:
-                ctr += 1
-            if ctr > 10 or bestVal > (validation_correct+10):
-                break
+            # TODO(CS181 Student): implement your stopping condition
+            # as described in part 3.4 of the homework instructions.
+            # Don't forget to use --enable-stopping on the command
+            # line to activate the functionality you implement here.
+            print "Implement me!"
     cCorrect = 0
     for inst in listInstTest:
-        listDblOut = feed_forward(net, inst.listDblFeatures)
+        listDblOut = build_layer_inputs_and_outputs(net, inst.listDblFeatures)[-1][-1]
         iGuess = decoder(listDblOut)
         #if opts.fShowGuesses:
         #print inst.iLabel, iGuess
