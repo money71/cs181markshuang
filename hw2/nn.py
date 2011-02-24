@@ -536,6 +536,7 @@ def experiment(opts):
     if opts.stopping_condition:
         bestVal = 0
         ctr = 0
+        t = 5*opts.rounds
     for ixRound in xrange(opts.rounds):
         # Compute the error
         errors = 0
@@ -556,10 +557,10 @@ def experiment(opts):
             if bestVal < validation_correct:
                 bestVal = validation_correct
                 ctr = 0
-            elif ctr > 10 or bestVal > (validation_correct + (200/(ixRound+1))):
+            ctr += 1
+            cutoff = t/(ixRound+1)
+            if ctr > cutoff or bestVal > (validation_correct+cutoff):
                 break
-            else:
-                ctr += 1
     cCorrect = 0
     for inst in listInstTest:
         listDblOut = feed_forward(net, inst.listDblFeatures)

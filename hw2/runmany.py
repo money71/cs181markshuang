@@ -2,18 +2,18 @@ import sys
 import os
 from subprocess import *
 
-iterations = 4
+iterations = 2
 depth = 3
 rounds = 100
-hidden = 0
-#hiddens = [15,30]
+#hidden = 0
+hiddens = [15,30]
 
 rounds_data = open("00_rounds_data.txt","w")
 
 print "  rate       max"
 rounds_data.write("  rate   rnd     train     valid\n")
 if __name__=='__main__':
-  #for hidden in hiddens:
+  for hidden in hiddens:
     for i in range(iterations):
         maxVal = [0, 0, 0.0, 0.0]
         #rate = .2
@@ -25,19 +25,18 @@ if __name__=='__main__':
                 curMaxVal = [0, 0, 0.0, 0.0]
                 args = ["python", "nnfast.py", "-l", str(rate),
                         "--hidden="+str(hidden), "-n", str(rounds),
-                        #"--train=training-9k.txt", "--test=test-1k.txt",
-                        #"--validation=validation-1k.txt", "--num_inputs=196",
-                        #"--enable-stopping",
+                        "--train=training-9k.txt", "--test=test-1k.txt",
+                        "--validation=validation-1k.txt", "--num_inputs=196",
+                        "--enable-stopping", "--max-instances=2000",
                         "2>&1"]
                 outfile = "%d_hidden%d_rate%f.txt" % (i, hidden, rate)
                 outfd = open(outfile, "w")
-                Popen(args, stderr=outfd,stdout=PIPE).communicate()[0]
+                Popen(args, stderr=outfd,stdout=outfd).communicate()[0]
                 outfd.close()
                 infile = outfile
                 infd = open(infile, "r")
-                infd.readline()
-                infd.readline()
-                infd.readline()
+                for _ in range(6):
+                    infd.readline()
                 rnd = 0
                 for line in infd:
                     rnd += 1
