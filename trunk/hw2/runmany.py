@@ -6,16 +6,20 @@ iterations = 4
 depth = 2
 rounds = 100
 hidden = 0
+#hiddens = [15,30]
 
 rounds_data = open("00_rounds_data.txt","w")
 
 print "  rate       max"
 rounds_data.write("  rate   rnd     train     valid\n")
 if __name__=='__main__':
+  #for hidden in hiddens:
     for i in range(iterations):
         maxVal = [0, 0, 0.0, 0.0]
-        rate = 0.2
-        incr = 0.01
+        rate = .2
+        incr = .01
+        #rate = 2
+        #incr = .1
         for d in range(depth):
             for j in range(20):
                 curMaxVal = [0, 0, 0.0, 0.0]
@@ -23,6 +27,7 @@ if __name__=='__main__':
                         "--hidden="+str(hidden), "-n", str(rounds),
                         "--train=training-9k.txt", "--test=test-1k.txt",
                         "--validation=validation-1k.txt", "--num_inputs=196",
+                        #"--enable-stopping",
                         "2>&1"]
                 outfile = "%d_hidden%d_rate%f.txt" % (i, hidden, rate)
                 outfd = open(outfile, "w")
