@@ -2,8 +2,8 @@ import sys
 import os
 from subprocess import *
 
-iterations = 2
-depth = 3
+iterations = 4
+depth = 1
 rounds = 100
 #hidden = 0
 hiddens = [15,30]
@@ -20,10 +20,10 @@ if __name__=='__main__':
         maxVal = [0, 0, 0.0, 0.0]
         #rate = .2
         #incr = .01
-        rate = 2
+        rate = 1
         incr = .1
         for d in range(depth):
-            for j in range(20):
+            for j in range(10):
                 curMaxVal = [0, 0, 0.0, 0.0]
                 args = ["python", "nnfast.py", "-l", str(rate),
                         "--hidden="+str(hidden), "-n", str(rounds),
@@ -59,7 +59,7 @@ if __name__=='__main__':
                     maxVal = curMaxVal
                 print "%1.4f  %8s" % (curMaxVal[0], curMaxVal[3])
                 rate -= incr
-            rate = maxVal[0]+incr
+            rate = maxVal[0]+incr/2
             incr = incr*0.1
 
 rounds_data.close()
