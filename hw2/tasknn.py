@@ -24,7 +24,6 @@ def build_xor_net():
         dblAlpha = 2.0*ROUNDS/(ixRound + ROUNDS)
         for inst in XOR_INSTANCES:
             nn.update_net(net, inst, dblAlpha, [inst.iLabel])
-    nn.print_net(net)
     return net
 
 def serialize_net(net):
