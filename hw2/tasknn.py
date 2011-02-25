@@ -24,6 +24,7 @@ def build_xor_net():
         dblAlpha = 2.0*ROUNDS/(ixRound + ROUNDS)
         for inst in XOR_INSTANCES:
             nn.update_net(net, inst, dblAlpha, [inst.iLabel])
+    nn.print_net(net)
     return net
 
 def serialize_net(net):
@@ -129,7 +130,7 @@ class XorDisplayTask(tftask.GraphTask):
     def get_description(self):
         return ("Build an artificial neural network that learns the XOR "
                 "function from training data.")
-    def get_prirority(self):
+    def get_priority(self):
         return 0
     def task(self):
         net = build_xor_net()
