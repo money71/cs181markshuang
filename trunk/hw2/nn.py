@@ -317,7 +317,7 @@ def distributed_encode_label(iLabel):
     [...]
     >>> print " ".join("%.1f" % dbl for dbl in listDblEncoding)
     0.1 0.1 0.9 0.1 0.1 0.1 0.1 0.1 0.1 0.1"""
-    ret = [.1]*10
+    ret = [0.1]*10
     ret[iLabel] = 0.9
     return ret
 
@@ -335,7 +335,7 @@ def binary_encode_label(iLabel):
     ret = []
     i = iLabel
     for j in range(4):
-        ret.append(.8*(i % 2) + .1)
+        ret.append(0.8*(i % 2) + 0.1)
         i = i >> 1
     return ret
 
@@ -428,7 +428,7 @@ def init_net(listCLayerSize, dblScale=0.01):
 def random_weight(dblScale):
     """Helper function that returns a random weight in the interval
     (-dblScale,dblScale)."""
-    return dblScale*(2*random() - 1)
+    return dblScale*(2.0*random() - 1.0)
 
 def random_list(size, dblScale):
     """Helper function that returns a list of 'size' random weights in the
