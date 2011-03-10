@@ -1,10 +1,35 @@
 #!/usr/bin/env python
 
 import random
+import math
 
 def dist(v1, v2):
     """Returns the Euclidean distance between instance 1 and instance 2."""
-    raise NotImplementedError
+    ret = 0
+    for v1i,v2i in zip(v1,v2):
+        ret += (v2i-v1i)**2
+    return math.sqrt(ret)
+
+def is_closest(vx, i_u, u):
+    """
+    determines whether u[i_u] is the closest of all u[*] to vector vx
+    returns 1 if true, 0 if false
+    """
+    dists = [dist(vx,vu) for vu in u]
+    minind = dists.index(min(dists))
+    #print i_u, minind
+    if minind == i_u:
+        return 1.0
+    return 0.0
+
+def err2(u,r,dataset):
+    e = 0
+    for i in range(len(dataset)):
+        for k in range(len(u)):
+            e += (dist(dataset[i],u[k])**2.0) * r[k][i]
+            #print "  i,k,err,",i,k,e
+    return e
+
 
 def kmeans(dataset, num_clusters, initial_means=None):
     """Runs the kmeans algorithm.
@@ -19,7 +44,29 @@ def kmeans(dataset, num_clusters, initial_means=None):
   Returns (means, error), where means is the list of mean vectors, and error is
   the mean distance from a datapoint to its cluster.
   """
-    raise NotImplementedError
+    if initial_means==None:
+      initial_means = random.sample(range(len(dataset)), num_clusters)
+    u = [dataset[i] for i in initial_means]
+    r = [map(lambda vx: is_closest(vx, i_u, u), dataset) for i_u in range(num_clusters)]
+
+    e1 = err2(u,r,dataset)
+    e0 = e1 + 1
+    while e0 != e1:
+        print "last error",e0,"this error",e1
+        r = [map(lambda vx: is_closest(vx, i_u, u), dataset) for i_u in range(num_clusters)]
+        for k in range(len(u)):
+            n_closest = sum(r[k])
+            new_u_total = [0 for x in u[k]]
+            for dim in range(len(u[k])):
+                listForDim =  [dataset[i][dim] * r[k][i] for i in range(len(dataset))]
+                new_u_total[dim] = sum(listForDim)
+            new_u = [ui/n_closest for ui in new_u_total]
+            u[k] = new_u
+        e0 = e1
+        e1 = err2(u,r,dataset)
+    return u, e1/len(dataset)
+    return
+
 
 def parse_input(datafile, num_examples):
     data = []
@@ -33,29 +80,127 @@ def parse_input(datafile, num_examples):
           break
     return data
 
+def eval_min(c1, c2, dataset):
+    d = -1
+    for cii in range(len(c1)):
+        for cjj in range(len(c2)):
+            dp =  dist(dataset[c1[cii]], dataset[c2[cjj]])
+            if d==-1 or dp < d:
+                d = dp
+    return d
+
+def eval_centroid(c1, c2, dataset):
+    c1p = [0 for i in c1]
+    c2p = [0 for i in c2]
+    for cii in range(len(c1)):
+        c1p = map(lambda i: c1p[i] + c1[i], range(len(c1p)))
+    c1p = map(lambda v: v/len(c1p), c1p)
+    for cjj in range(len(c2)):
+        c2p = map(lambda i: c2p[i] + c2[i], range(len(c2p)))
+    c2p = map(lambda v: v/len(c2p), c2p)
+    return dist(c1p,c2p)
+
+def eval_mean(c1, c2, dataset):
+    d = 0
+    for cii in range(len(c1)):
+        for cjj in range(len(c2)):
+            dp =  dist(dataset[c1[cii]], dataset[c2[cjj]])
+            d += dp
+    return d / len(c1)*len(c2)
+
+def eval_max(c1, c2, dataset):
+    d = -1
+    for cii in range(len(c1)):
+        for cjj in range(len(c2)):
+            dp =  dist(dataset[c1[cii]], dataset[c2[cjj]])
+            if d==-1 or dp > d:
+                d = dp
+    return d
+
+def closest_two(clusters, dataset, ev):
+    c1 = 0
+    c2 = 1
+    i1 = 0
+    i2 = 0
+    d = dist(dataset[clusters[c1][i1]], dataset[clusters[c2][i2]])
+    for ci in range(len(clusters)):
+        for cj in range(len(clusters)):
+            if ci!=cj:
+                dp = ev(clusters[ci],clusters[cj],dataset)
+                if dp < d:
+                    c1 = ci
+                    c2 = cj
+                    d = dp
+    return c1, c2
+
+
 def min_hac(dataset, num_clusters):
     """Runs the min hac algorithm in dataset.  Returns a list of the clusters
   formed.
   """
-    raise NotImplementedError
+    clusters = [[i] for i in range(len(dataset))]
+    while len(clusters) != num_clusters:
+        i1, i2 = closest_two(clusters, dataset,eval_min)
+        c1 = clusters[i1]
+        c2 = clusters[i2]
+        clusters.remove(c1)
+        clusters.remove(c2)
+        c1.extend(c2)
+        clusters.append(c1)
+        #print "NEW CLUSTER INDS: ",clusters
+        #print
+    return clusters
 
 def max_hac(dataset, num_clusters):
     """Runs the max hac algorithm in dataset.  Returns a list of the clusters
   formed.
   """
-    raise NotImplementedError
+    clusters = [[i] for i in range(len(dataset))]
+    while len(clusters) != num_clusters:
+        i1, i2 = closest_two(clusters, dataset,eval_max)
+        c1 = clusters[i1]
+        c2 = clusters[i2]
+        clusters.remove(c1)
+        clusters.remove(c2)
+        c1.extend(c2)
+        clusters.append(c1)
+        #print "NEW CLUSTER INDS: ",clusters
+        #print
+    return clusters
 
 def mean_hac(dataset, num_clusters):
     """Runs the mean hac algorithm in dataset.  Returns a list of the clusters
   formed.
   """
-    raise NotImplementedError
+    clusters = [[i] for i in range(len(dataset))]
+    while len(clusters) != num_clusters:
+        i1, i2 = closest_two(clusters, dataset,eval_mean)
+        c1 = clusters[i1]
+        c2 = clusters[i2]
+        clusters.remove(c1)
+        clusters.remove(c2)
+        c1.extend(c2)
+        clusters.append(c1)
+        #print "NEW CLUSTER INDS: ",clusters
+        #print
+    return clusters
 
 def centroid_hac(dataset, num_clusters):
     """Runs the centroid hac algorithm in dataset.  Returns a list of the clusters
   formed.
   """
-    raise NotImplementedError
+    clusters = [[i] for i in range(len(dataset))]
+    while len(clusters) != num_clusters:
+        i1, i2 = closest_two(clusters, dataset,eval_centroid)
+        c1 = clusters[i1]
+        c2 = clusters[i2]
+        clusters.remove(c1)
+        clusters.remove(c2)
+        c1.extend(c2)
+        clusters.append(c1)
+        #print "NEW CLUSTER INDS: ",clusters
+        #print
+    return clusters
 
 def main(argv):
     import optparse
@@ -84,7 +229,7 @@ def main(argv):
     if opts.run_hac:
       opts.datafile = "adults-small.txt"
       if opts.hac_alg == 'min' or opts.hac_alg == 'max':
-        opts.num_examples = 100
+        opts.num_examples = 200
       elif opts.hac_alg == 'mean' or opts.hac_alg == 'centroid':
         opts.num_examples = 200
 
