@@ -57,20 +57,7 @@ def parse_input(datafile, num_examples):
         if not num_examples is None and ct >= num_examples:
           break
     return data
-
-def merge_closest(clusters, dataset, d_fn):
-    cmin1 = []
-    cmin2 = []
-    dmin = float('Inf')
-    for c1,c2 in combinations(clusters, 2):
-        d = d_fn(c1, c2, dataset)
-        if d <= dmin:
-            dmin = d
-            cmin1 = c1
-            cmin2 = c2
-    clusters[clusters.index(cmin1)].extend(cmin2)
-    clusters.remove(cmin2)
-    
+  
 def min_fn(c1, c2, dataset):
     return min([dist(dataset[x],dataset[y]) for x in c1 for y in c2])
 
@@ -86,8 +73,8 @@ def centroid_fn(c1, c2, dataset):
 
 def min_hac(dataset, num_clusters):
     """Runs the min hac algorithm in dataset.  Returns a list of the clusters
-  formed.
-  """
+    formed.
+    """
     clusters = [[i] for i in xrange(len(dataset))]
     while len(clusters) != num_clusters:
         cmin1 = []
@@ -105,8 +92,8 @@ def min_hac(dataset, num_clusters):
 
 def max_hac(dataset, num_clusters):
     """Runs the max hac algorithm in dataset.  Returns a list of the clusters
-  formed.
-  """
+    formed.
+    """
     clusters = [[i] for i in xrange(len(dataset))]
     while len(clusters) != num_clusters:
         cmin1 = []
@@ -124,8 +111,8 @@ def max_hac(dataset, num_clusters):
 
 def mean_hac(dataset, num_clusters):
     """Runs the mean hac algorithm in dataset.  Returns a list of the clusters
-  formed.
-  """
+    formed.
+    """
     clusters = [[i] for i in xrange(len(dataset))]
     while len(clusters) != num_clusters:
         cmin1 = []
@@ -143,8 +130,8 @@ def mean_hac(dataset, num_clusters):
 
 def centroid_hac(dataset, num_clusters):
     """Runs the centroid hac algorithm in dataset.  Returns a list of the clusters
-  formed.
-  """
+    formed.
+    """
     clusters = [[i] for i in xrange(len(dataset))]
     while len(clusters) != num_clusters:
         cmin1 = []
