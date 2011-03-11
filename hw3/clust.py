@@ -1,72 +1,50 @@
 #!/usr/bin/env python
 
 import random
-import math
+from math import sqrt
+from itertools import izip
+from itertools import combinations
 
 def dist(v1, v2):
     """Returns the Euclidean distance between instance 1 and instance 2."""
-    ret = 0
-    for v1i,v2i in zip(v1,v2):
-        ret += (v2i-v1i)**2
-    return math.sqrt(ret)
-
-def is_closest(vx, i_u, u):
-    """
-    determines whether u[i_u] is the closest of all u[*] to vector vx
-    returns 1 if true, 0 if false
-    """
-    dists = [dist(vx,vu) for vu in u]
-    minind = dists.index(min(dists))
-    #print i_u, minind
-    if minind == i_u:
-        return 1.0
-    return 0.0
-
-def err2(u,r,dataset):
-    e = 0
-    for i in range(len(dataset)):
-        for k in range(len(u)):
-            e += (dist(dataset[i],u[k])**2.0) * r[k][i]
-            #print "  i,k,err,",i,k,e
-    return e
-
+    return sqrt(sum([(v1_j-v2_j)**2 for v1_j,v2_j in izip(v1,v2)]))
 
 def kmeans(dataset, num_clusters, initial_means=None):
     """Runs the kmeans algorithm.
 
-   dataset: A list of instances.
-   num_clusters: The number of clusters to maintain.
-   initial_means: (optional) If specified, gives the indices of the data points
-     which will be the initial centers of each cluster.  Must have length
-     num_clusters if specified.  If not specified, then kmeans should randomly
-     initial the means to random data points.
+    dataset: A list of instances.
+    num_clusters: The number of clusters to maintain.
+    initial_means: (optional) If specified, gives the indices of the data points
+        which will be the initial centers of each cluster.  Must have length
+        num_clusters if specified.  If not specified, then kmeans should randomly
+        initial the means to random data points.
 
-  Returns (means, error), where means is the list of mean vectors, and error is
-  the mean distance from a datapoint to its cluster.
-  """
-    if initial_means==None:
-      initial_means = random.sample(range(len(dataset)), num_clusters)
+    Returns (means, error), where means is the list of mean vectors, and error is
+    the mean distance from a datapoint to its cluster.
+    """
+    num_in = len(dataset)
+    if not initial_means:
+        initial_means = random.sample(xrange(num_in), num_clusters)
     u = [dataset[i] for i in initial_means]
-    r = [map(lambda vx: is_closest(vx, i_u, u), dataset) for i_u in range(num_clusters)]
-
-    e1 = err2(u,r,dataset)
-    e0 = e1 + 1
-    while e0 != e1:
-        print "last error",e0,"this error",e1
-        r = [map(lambda vx: is_closest(vx, i_u, u), dataset) for i_u in range(num_clusters)]
-        for k in range(len(u)):
-            n_closest = sum(r[k])
-            new_u_total = [0 for x in u[k]]
-            for dim in range(len(u[k])):
-                listForDim =  [dataset[i][dim] * r[k][i] for i in range(len(dataset))]
-                new_u_total[dim] = sum(listForDim)
-            new_u = [ui/n_closest for ui in new_u_total]
-            u[k] = new_u
-        e0 = e1
-        e1 = err2(u,r,dataset)
-    return u, e1/len(dataset)
-    return
-
+    r = [0]*num_in
+    while 1:
+        diff = False
+        for i, x_i in enumerate(dataset):
+            dists_i = [dist(x_i,u_k) for u_k in u]
+            r_i = dists_i.index(min(dists_i))
+            if r[i] != r_i:
+                r[i] = r_i
+                diff = True
+        if not diff:
+            break
+        for k in xrange(num_clusters):
+            cluster = [dataset[i] for i in xrange(num_in) if r[i] == k]
+            size = len(cluster)
+            u[k] = [sum(x)/(1.0*size) for x in izip(*cluster)]
+    e = sum([dist(dataset[i],u[k])**2 for i in xrange(num_in)
+                                      for k in xrange(num_clusters)
+                                      if r[i] == k]) / num_in
+    return u, e
 
 def parse_input(datafile, num_examples):
     data = []
@@ -80,126 +58,106 @@ def parse_input(datafile, num_examples):
           break
     return data
 
-def eval_min(c1, c2, dataset):
-    d = -1
-    for cii in range(len(c1)):
-        for cjj in range(len(c2)):
-            dp =  dist(dataset[c1[cii]], dataset[c2[cjj]])
-            if d==-1 or dp < d:
-                d = dp
-    return d
+def merge_closest(clusters, dataset, d_fn):
+    cmin1 = []
+    cmin2 = []
+    dmin = float('Inf')
+    for c1,c2 in combinations(clusters, 2):
+        d = d_fn(c1, c2, dataset)
+        if d <= dmin:
+            dmin = d
+            cmin1 = c1
+            cmin2 = c2
+    clusters[clusters.index(cmin1)].extend(cmin2)
+    clusters.remove(cmin2)
+    
+def min_fn(c1, c2, dataset):
+    return min([dist(dataset[x],dataset[y]) for x in c1 for y in c2])
 
-def eval_centroid(c1, c2, dataset):
-    c1p = [0 for i in c1]
-    c2p = [0 for i in c2]
-    for cii in range(len(c1)):
-        c1p = map(lambda i: c1p[i] + c1[i], range(len(c1p)))
-    c1p = map(lambda v: v/len(c1p), c1p)
-    for cjj in range(len(c2)):
-        c2p = map(lambda i: c2p[i] + c2[i], range(len(c2p)))
-    c2p = map(lambda v: v/len(c2p), c2p)
-    return dist(c1p,c2p)
+def max_fn(c1, c2, dataset):
+    return max([dist(dataset[x],dataset[y]) for x in c1 for y in c2])
 
-def eval_mean(c1, c2, dataset):
-    d = 0
-    for cii in range(len(c1)):
-        for cjj in range(len(c2)):
-            dp =  dist(dataset[c1[cii]], dataset[c2[cjj]])
-            d += dp
-    return d / len(c1)*len(c2)
+def mean_fn(c1, c2, dataset):
+    return sum([dist(dataset[x],dataset[y]) for x in c1 for y in c2]) / (1.0*len(c1)*len(c2))
 
-def eval_max(c1, c2, dataset):
-    d = -1
-    for cii in range(len(c1)):
-        for cjj in range(len(c2)):
-            dp =  dist(dataset[c1[cii]], dataset[c2[cjj]])
-            if d==-1 or dp > d:
-                d = dp
-    return d
-
-def closest_two(clusters, dataset, ev):
-    c1 = 0
-    c2 = 1
-    i1 = 0
-    i2 = 0
-    d = dist(dataset[clusters[c1][i1]], dataset[clusters[c2][i2]])
-    for ci in range(len(clusters)):
-        for cj in range(len(clusters)):
-            if ci!=cj:
-                dp = ev(clusters[ci],clusters[cj],dataset)
-                if dp < d:
-                    c1 = ci
-                    c2 = cj
-                    d = dp
-    return c1, c2
-
+def centroid_fn(c1, c2, dataset):
+    return dist([sum(a)/(1.0*len(c1)) for a in izip(*[dataset[x] for x in c1])],
+                [sum(b)/(1.0*len(c2)) for b in izip(*[dataset[y] for y in c1])])
 
 def min_hac(dataset, num_clusters):
     """Runs the min hac algorithm in dataset.  Returns a list of the clusters
   formed.
   """
-    clusters = [[i] for i in range(len(dataset))]
+    clusters = [[i] for i in xrange(len(dataset))]
     while len(clusters) != num_clusters:
-        i1, i2 = closest_two(clusters, dataset,eval_min)
-        c1 = clusters[i1]
-        c2 = clusters[i2]
-        clusters.remove(c1)
-        clusters.remove(c2)
-        c1.extend(c2)
-        clusters.append(c1)
-        #print "NEW CLUSTER INDS: ",clusters
-        #print
+        cmin1 = []
+        cmin2 = []
+        dmin = float('Inf')
+        for c1,c2 in combinations(clusters, 2):
+            d = min_fn(c1, c2, dataset)
+            if d <= dmin:
+                dmin = d
+                cmin1 = c1
+                cmin2 = c2
+        clusters[clusters.index(cmin1)].extend(cmin2)
+        clusters.remove(cmin2)
     return clusters
 
 def max_hac(dataset, num_clusters):
     """Runs the max hac algorithm in dataset.  Returns a list of the clusters
   formed.
   """
-    clusters = [[i] for i in range(len(dataset))]
+    clusters = [[i] for i in xrange(len(dataset))]
     while len(clusters) != num_clusters:
-        i1, i2 = closest_two(clusters, dataset,eval_max)
-        c1 = clusters[i1]
-        c2 = clusters[i2]
-        clusters.remove(c1)
-        clusters.remove(c2)
-        c1.extend(c2)
-        clusters.append(c1)
-        #print "NEW CLUSTER INDS: ",clusters
-        #print
+        cmin1 = []
+        cmin2 = []
+        dmin = float('Inf')
+        for c1,c2 in combinations(clusters, 2):
+            d = max_fn(c1, c2, dataset)
+            if d <= dmin:
+                dmin = d
+                cmin1 = c1
+                cmin2 = c2
+        clusters[clusters.index(cmin1)].extend(cmin2)
+        clusters.remove(cmin2)
     return clusters
 
 def mean_hac(dataset, num_clusters):
     """Runs the mean hac algorithm in dataset.  Returns a list of the clusters
   formed.
   """
-    clusters = [[i] for i in range(len(dataset))]
+    clusters = [[i] for i in xrange(len(dataset))]
     while len(clusters) != num_clusters:
-        i1, i2 = closest_two(clusters, dataset,eval_mean)
-        c1 = clusters[i1]
-        c2 = clusters[i2]
-        clusters.remove(c1)
-        clusters.remove(c2)
-        c1.extend(c2)
-        clusters.append(c1)
-        #print "NEW CLUSTER INDS: ",clusters
-        #print
+        cmin1 = []
+        cmin2 = []
+        dmin = float('Inf')
+        for c1,c2 in combinations(clusters, 2):
+            d = mean_fn(c1, c2, dataset)
+            if d <= dmin:
+                dmin = d
+                cmin1 = c1
+                cmin2 = c2
+        clusters[clusters.index(cmin1)].extend(cmin2)
+        clusters.remove(cmin2)
     return clusters
 
 def centroid_hac(dataset, num_clusters):
     """Runs the centroid hac algorithm in dataset.  Returns a list of the clusters
   formed.
   """
-    clusters = [[i] for i in range(len(dataset))]
+    clusters = [[i] for i in xrange(len(dataset))]
     while len(clusters) != num_clusters:
-        i1, i2 = closest_two(clusters, dataset,eval_centroid)
-        c1 = clusters[i1]
-        c2 = clusters[i2]
-        clusters.remove(c1)
-        clusters.remove(c2)
-        c1.extend(c2)
-        clusters.append(c1)
-        #print "NEW CLUSTER INDS: ",clusters
-        #print
+        cmin1 = []
+        cmin2 = []
+        dmin = float('Inf')
+        for c1,c2 in combinations(clusters, 2):
+            d = centroid_fn(c1, c2, dataset)
+            if d <= dmin:
+                dmin = d
+                cmin1 = c1
+                cmin2 = c2
+        clusters[clusters.index(cmin1)].extend(cmin2)
+        clusters.remove(cmin2)
     return clusters
 
 def main(argv):
