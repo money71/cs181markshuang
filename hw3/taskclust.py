@@ -12,7 +12,7 @@ from tfutils import tftask
 import clust
 
 class KMeans(tftask.ChartTask):
-    SAMPLES = 3
+    SAMPLES = 10
     CLUSTERS = xrange(2, 11)
     def get_name(self):
         return "KMeans"

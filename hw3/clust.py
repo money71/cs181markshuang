@@ -69,7 +69,7 @@ def mean_fn(c1, c2, dataset):
 
 def centroid_fn(c1, c2, dataset):
     return dist([sum(a)/(1.0*len(c1)) for a in izip(*[dataset[x] for x in c1])],
-                [sum(b)/(1.0*len(c2)) for b in izip(*[dataset[y] for y in c1])])
+                [sum(b)/(1.0*len(c2)) for b in izip(*[dataset[y] for y in c2])])
 
 def min_hac(dataset, num_clusters):
     """Runs the min hac algorithm in dataset.  Returns a list of the clusters
@@ -174,7 +174,7 @@ def main(argv):
     if opts.run_hac:
       opts.datafile = "adults-small.txt"
       if opts.hac_alg == 'min' or opts.hac_alg == 'max':
-        opts.num_examples = 200
+        opts.num_examples = 100
       elif opts.hac_alg == 'mean' or opts.hac_alg == 'centroid':
         opts.num_examples = 200
 
