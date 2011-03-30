@@ -2,6 +2,8 @@
 
 from util import * 
 from numpy import *
+from numexpr import *
+from bottleneck import *
 from math import log
 import copy
 import sys
@@ -167,9 +169,10 @@ def compute_expectation_step(obs, N, N_ho, N_h1h2, N_h1, N_h, model, debug=False
     and return the loglikelihood of the dataset under the current model
 
     obs: the observation sequences in the training data
+    N: number of hidden states
     
     the sufficient statistics, refer to lecture 15 notes, p13
-    N: number of hidden states
+    all are stored in numpy arrays
     N_ho: expected number of times in the training data that 
           an observation is the output in hidden state.
           It is a numpy array with the number of rows 
@@ -178,6 +181,7 @@ def compute_expectation_step(obs, N, N_ho, N_h1h2, N_h1, N_h, model, debug=False
     N_h1h2: expected number of times a transition from one hidden state to another
     N_h1: expected number of times in each initial state 
     N_h: expected of times in each state at all (used for obs model)
+    
     model: the current hmm model of initial, transition and observation probs
     debug: for printing out model parameters or not, set to True by -v option in command line
     
@@ -189,12 +193,14 @@ def compute_expectation_step(obs, N, N_ho, N_h1h2, N_h1, N_h, model, debug=False
 
 
 def compute_maximization_step(N, M, N_ho, N_h1h2, N_h1, N_h, model, debug=False):
-    """M-step, update the hmm model by using the incoming sufficient statistics, and
+    """M-step, update the hmm model by using the incoming sufficient statistics, and return an updated model
     model = (initial, tran_model, obs_model)
     
-    the sufficient statistics, refer to lecture 15 notes, p13
     N: number of hidden states
     M: number of possible observations
+    
+    the sufficient statistics, refer to lecture 15 notes, p13,
+    all are stored in numpy arrays
     N_ho: expected number of times in the training data that 
           an observation is the output in hidden state.
           It is a numpy array with the number of rows 
@@ -203,10 +209,13 @@ def compute_maximization_step(N, M, N_ho, N_h1h2, N_h1, N_h, model, debug=False)
     N_h1h2: expected number of times a transition from one hidden state to another
     N_h1: expected number of times in each initial state 
     N_h: expected of times in each state at all (used for obs model)
+    
     model: the current hmm model of initial, transition and observation probs
     debug: for printing out model parameters or not, set to True by -v option in command line
+    
+    Return model, an updated hmm model of initial, transition and observation probs
     """
-
+    
     raise Exception("Not implemented")
 
     
@@ -283,8 +292,7 @@ def baumwelch(obs,N,M, num_iters=0, debug=False,init_model=None, flag=False):
         loglikelihoods.append(dataset_loglikelihood)
 
         ### Maximization step ###
-        #model can also be updated through "side-effect"
-        compute_maximization_step(N, M, N_ho, N_h1h2, N_h1, N_h, model, debug)
+        model = compute_maximization_step(N, M, N_ho, N_h1h2, N_h1, N_h, model, debug)
         
 
         # Termination
@@ -321,9 +329,9 @@ def baumwelch(obs,N,M, num_iters=0, debug=False,init_model=None, flag=False):
             break
         
         if num_iters:
-            if iters == num_iters+1:
+            if iters-1 == num_iters:
                 if debug:
-                    print "Maximum number of iterations (%s iterations) reached.\n\n" % iters
+                    print "Maximum number of iterations (%s iterations) reached.\n\n" % iters-1
                 break
 
     (initial, tran_model, obs_model) = model
