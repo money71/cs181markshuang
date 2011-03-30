@@ -29,6 +29,7 @@ class HMMsTest(unittest.TestCase):
 	                          [[0.625000, 0.375000],
 	                           [0.625000, 0.375000]]) < eps)
 	
+	
 def simple_weather_model():
     hmm = HMM(['s1','s2'], ['R','NR'])
     init = [0.7, 0.3]
@@ -49,6 +50,7 @@ class ViterbiTest(unittest.TestCase):
 		  [0.2,0.8]]
 	hmm.set_hidden_model(init, trans, observ)
 	return hmm
+
 		
     def test_viterbi_simple_sequence(self):
 	hmm = simple_weather_model()
@@ -64,7 +66,8 @@ class ViterbiTest(unittest.TestCase):
 	hidden_seq = hmm.most_likely_states(seq, False)
 	# Check if we got right answer from the version with logs.
 	self.assertEqual(hidden_seq[2000:2010], [1, 0, 1, 0, 1, 1, 0, 1, 0, 1])
-		
+
+
 class RobotTest(unittest.TestCase):
     def test_small_robot_dataset(self):
 	data_filename = "robot_small.data"
@@ -130,7 +133,9 @@ class BaumWelchWeatherTest(unittest.TestCase):
 	self.seqs = [[0, 0], [1, 1, 0]]
 	self.init_model = weather_hmm.get_model()
 	import hmm
-	hmm.PRODUCTION = False  # Don't want smoothing or normalization..
+	# turn off smoothing just for unit test, to match numbers from lecture notes
+	hmm.PRODUCTION = False  
+	
 	
     def test_bw_simple_weather_model(self):
 	# example from lecture notes 15, p14, just runs one iteration here
@@ -138,24 +143,14 @@ class BaumWelchWeatherTest(unittest.TestCase):
 	(transition, observation, initial) = model
 	
 	eps = 0.0001
-	self.assertTrue(max_delta(initial, [ 0.700000, 0.300000 ]) < eps)
+	self.assertTrue(max_delta(initial, [ 0.646592, 0.353408  ]) < eps)
 
 	self.assertTrue(max_delta(transition, [[ 0.841285, 0.158715 ], 
 	                                        [ 0.127844, 0.872156 ]]) < eps)
 	self.assertTrue(max_delta(observation, [[ 0.731416, 0.268584 ], 
 	                                         [ 0.426629, 0.573371 ]]) < eps)
     
-    def test_bw_convergence_ll(self):
-	# example from lecture notes 15, p14, runs BW until convergence
-	# checks at the end of the log likelihood is correct
-	model = baumwelch(self.seqs, 2, 2, 0, False, self.init_model, True) # just one EM iteration
-	(transition, observation, initial, loglikelihood) = model
-	eps = 0.00001
-	print "log likelihood of training data upon convergence is", loglikelihood[-1]
-	#self.assertTrue(abs(loglikelihood[-1] + 3.029072) < eps)
-
-	
-
+   
 
 	
 		
