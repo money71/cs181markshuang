@@ -2,8 +2,6 @@
 
 from util import * 
 from numpy import *
-from numexpr import *
-from bottleneck import *
 from math import log
 from itertools import product
 import copy
@@ -11,11 +9,11 @@ import sys
 
 
 # If PRODUCTION is false, don't do smoothing 
-
 PRODUCTION = True
 
 # Pretty printing for 1D/2D numpy arrays
 MAX_PRINTING_SIZE = 30
+
 
 def format_array(arr):
     s = shape(arr)
@@ -28,13 +26,14 @@ def format_array(arr):
     else:
         lines = []
         for i in range(s[0]):
-            lines.append("[  " + "  ".join(["%.6f" % float(arr[i,j]) for j in range(s[1])]) + "  ]")
+            lines.append("[  " + "  ".join(["%.6f" % float(arr[i,j]) for j in
+                                            range(s[1])]) + "  ]")
         return "\n".join(lines)
-
 
 
 def format_array_print(arr):
     print format_array(arr)
+
 
 def init_random_model(N, max_obs, seed=None):
     if seed==None:
@@ -47,16 +46,13 @@ def init_random_model(N, max_obs, seed=None):
     obs_model  = random.random([N,max_obs])    
     initial    = random.random([N])
 
-    initial    = ones([N])
-
     # Normalize
-    initial    = initial/sum(initial)
+    initial    = initial / sum(initial)
     for i in range(N): 
-        tran_model[i,:] = tran_model[i,:]/sum(tran_model[i,:])
-        obs_model[i,:]  = obs_model[i,:]/sum(obs_model[i,:])
+        tran_model[i,:] = tran_model[i,:] / sum(tran_model[i,:])
+        obs_model[i,:]  = obs_model[i,:] / sum(obs_model[i,:])
     
     return (initial, tran_model, obs_model)
-
 
 
 def string_of_model(model, label):
@@ -76,7 +72,7 @@ observation:
        format_array(tran_model),
        format_array(obs_model))
 
-    
+
 def check_model(model):
     """Check that things add to one as they should"""
     (initial, tran_model, obs_model) = model
@@ -90,14 +86,16 @@ def print_model(model, label):
     check_model(model)
     print string_of_model(model, label)    
 
+
 def max_delta(model, new_model):
-    """Return the largest difference between any two corresponding 
-    values in the models"""
-    return max( [(abs(model[i] - new_model[i])).max() for i in range(len(model))] )
+    """Return the largest difference between any two corresponding values in the
+    models"""
+    return max( [(abs(model[i] - new_model[i])).max() for i in
+                 range(len(model))] )
 
 
 def get_alpha(obs, model):
-    """ Returns the array of alphas and the log likelyhood of the sequence.
+    """Returns the array of alphas and the log likelyhood of the sequence.
 
     Note: doing normalization as described in Ghahramani '01--just normalizing
     both alpha and beta to sum to 1 at each time step."""
@@ -114,7 +112,7 @@ def get_alpha(obs, model):
 
     for t in range(1,n):
         for j in range(N):
-            s = sum(tran_model[:,j]*alpha[t-1,:])
+            s = sum(tran_model[:,j] * alpha[t-1,:])
             alpha[t,j] = s * obs_model[j,obs[t]]
         normalization = sum(alpha[t,:])
         loglikelyhood += log(normalization)
@@ -122,10 +120,10 @@ def get_alpha(obs, model):
         
     return alpha, loglikelyhood
 
-def get_beta(obs,model):
-    """ Note: doing normalization as described in Ghahramani '01--just normalizing
-    both alpha and beta to sum to 1 at each time step."""
 
+def get_beta(obs,model):
+    """Note: doing normalization as described in Ghahramani '01--just
+    normalizing both alpha and beta to sum to 1 at each time step."""
     (initial, tran_model, obs_model) = model
     N = shape(tran_model)[0]
     n = len(obs)
@@ -135,7 +133,8 @@ def get_beta(obs,model):
     beta[n-1,:] = ones(N) / N
     for t in range(n-2,-1,-1):
         for i in range(N):
-            beta[t,i] = sum(tran_model[i,:]*obs_model[:,obs[t+1]]*beta[t+1,:])
+            beta[t,i] = sum(tran_model[i,:] * obs_model[:,obs[t+1]] *
+                            beta[t+1,:])
         normalization = sum(beta[t,:])
         beta[t,:] /= normalization
     return beta
@@ -145,7 +144,7 @@ def get_gamma(alpha, beta):
     (n,N) = shape(alpha)
     gamma = zeros((n,N))
     for t in range(n):
-        normalization = sum(alpha[t,:]*beta[t,:])
+        normalization = sum(alpha[t,:] * beta[t,:])
         gamma[t,:] = alpha[t,:] * beta[t,:] / normalization
     return gamma
 
@@ -159,37 +158,40 @@ def get_xi(obs,alpha, beta, model):
         s = 0
         for i in range(N):
             for j in range(N):
-                xi[t,i,j] = alpha[t,i] * tran_model[i,j] * obs_model[j,obs[t+1]] * beta[t+1,j]
+                xi[t,i,j] = (alpha[t,i] * tran_model[i,j] *
+                             obs_model[j,obs[t+1]] * beta[t+1,j])
                 s += xi[t,i,j]
         xi[t,:,:] = xi[t,:,:] / s
     return xi
 
 
-def compute_expectation_step(obs, N, N_ho, N_h1h2, N_h1, N_h, model, debug=False):
-    """ E-step, update the sufficient statistics given the current model,
-    and return the loglikelihood of the dataset under the current model
+def compute_expectation_step(obs, N, N_ho, N_h1h2, N_h1, N_h, model,
+                             debug=False):
+    """E-step, update the sufficient statistics given the current model, and
+    return the loglikelihood of the dataset under the current model
 
     obs: the observation sequences in the training data
     N: number of hidden states
     
     the sufficient statistics, refer to lecture 15 notes, p13
     all are stored in numpy arrays
-    N_ho: expected number of times in the training data that 
-          an observation is the output in hidden state.
-          It is a numpy array with the number of rows 
-               equal to the number of hidden states (N)
-          and the number of cols equal to the number of observations (M)
-    N_h1h2: expected number of times a transition from one hidden state to another
+    N_ho: expected number of times in the training data that an observation is
+          the output in hidden state. It is a numpy array with the number of
+          rows equal to the number of hidden states (N) and the number of cols
+          equal to the number of observations (M)
+    N_h1h2: expected number of times a transition from one hidden state to
+            another
     N_h1: expected number of times in each initial state 
     N_h: expected of times in each state at all (used for obs model)
     
     model: the current hmm model of initial, transition and observation probs
-    debug: for printing out model parameters or not, set to True by -v option in command line
+    debug: for printing out model parameters or not, set to True by -v option in
+           command line
     
     Return dataset_logliklihood
-    note get_alpha() returns the likelihood of an observation seq and
-    note that functions for getting beta, xi and gamma values are also implemented for you"""
-    
+    note get_alpha() returns the likelihood of an observation seq and note that
+    functions for getting beta, xi and gamma values are also implemented for you
+    """
     dataset_loglikelihood = 0.0
     for seq in obs:
         n = len(seq)
@@ -202,7 +204,7 @@ def compute_expectation_step(obs, N, N_ho, N_h1h2, N_h1, N_h, model, debug=False
         dataset_loglikelihood += loglikelihood
                 
         if debug:
-            print "processing sequence: ", seq
+            print "sequence: ", seq
             print "alpha: "
             format_array_print(alpha)
             print "beta: "
@@ -225,28 +227,32 @@ def compute_expectation_step(obs, N, N_ho, N_h1h2, N_h1, N_h, model, debug=False
     return dataset_loglikelihood
 
 
-def compute_maximization_step(N, M, N_ho, N_h1h2, N_h1, N_h, model, debug=False):
-    """M-step, update the hmm model by using the incoming sufficient statistics, and return an updated model
+def compute_maximization_step(N, M, N_ho, N_h1h2, N_h1, N_h, model,
+                              debug=False):
+    """M-step, update the hmm model by using the incoming sufficient statistics,
+    and return an updated model
     model = (initial, tran_model, obs_model)
     
     N: number of hidden states
     M: number of possible observations
     
-    the sufficient statistics, refer to lecture 15 notes, p13,
+    the sufficient statistics, refer to lecture 15 notes, p13
     all are stored in numpy arrays
-    N_ho: expected number of times in the training data that 
-          an observation is the output in hidden state.
-          It is a numpy array with the number of rows 
-               equal to the number of hidden states (N)
-          and the number of cols equal to the number of observations (M)
-    N_h1h2: expected number of times a transition from one hidden state to another
+    N_ho: expected number of times in the training data that an observation is
+          the output in hidden state. It is a numpy array with the number of
+          rows equal to the number of hidden states (N) and the number of cols
+          equal to the number of observations (M)
+    N_h1h2: expected number of times a transition from one hidden state to
+            another
     N_h1: expected number of times in each initial state 
     N_h: expected of times in each state at all (used for obs model)
     
     model: the current hmm model of initial, transition and observation probs
-    debug: for printing out model parameters or not, set to True by -v option in command line
+    debug: for printing out model parameters or not, set to True by -v option in
+           command line
     
-    Return model, an updated hmm model of initial, transition and observation probs
+    Return model, an updated hmm model of initial, transition and observation
+    probs
     """
     (initial, tran_model, obs_model) = model
     
@@ -262,8 +268,7 @@ def compute_maximization_step(N, M, N_ho, N_h1h2, N_h1, N_h, model, debug=False)
     
     return (initial, tran_model, obs_model)
 
-    
-    
+
 # Note: This implementation is as presented in the Rabiner '89 HMM tutorial.
 # Variable definitions
 # obs    = list of numpy arrays representing multiple observation sequences
@@ -273,7 +278,7 @@ def compute_maximization_step(N, M, N_ho, N_h1h2, N_h1, N_h, model, debug=False)
 # num_iters = maximum number of iterations allowed (if set to 0 then no limit)
 # For each observation sequence:
 #   n = number of observations in the sequence.  (indexed 0..n-1)
-def baumwelch(obs,N,M, num_iters=0, debug=False,init_model=None, flag=False):    
+def baumwelch(obs, N, M, num_iters=0, debug=False, init_model=None, flag=False):    
     K = len(obs)
 
     if debug:
@@ -290,7 +295,7 @@ def baumwelch(obs,N,M, num_iters=0, debug=False,init_model=None, flag=False):
             # Just making things deterministic for now.
             # Change to "seed = None" if you want to experiment with
             # random restart, for example.
-            seed = 42   
+            seed = None
         model = init_random_model(N,M, seed)
     else:
         model = init_model
@@ -331,12 +336,16 @@ def baumwelch(obs,N,M, num_iters=0, debug=False,init_model=None, flag=False):
         old_model = copy.deepcopy(model)
         
         #### Expectation step ####
-        #N_ho, N_h1h2, N_h1, N_h are numpy arrays and are passed by reference, updated through "side-effects"
-        dataset_loglikelihood = compute_expectation_step(obs, N, N_ho, N_h1h2, N_h1, N_h, model, debug)
+        #N_ho, N_h1h2, N_h1, N_h are numpy arrays and are passed by reference,
+        #updated through "side-effects"
+        dataset_loglikelihood = compute_expectation_step(obs, N, N_ho, N_h1h2,
+                                                         N_h1, N_h, model,
+                                                         debug)
         loglikelihoods.append(dataset_loglikelihood)
 
         ### Maximization step ###
-        model = compute_maximization_step(N, M, N_ho, N_h1h2, N_h1, N_h, model, debug)
+        model = compute_maximization_step(N, M, N_ho, N_h1h2, N_h1, N_h, model,
+                                          debug)
         
 
         # Termination
@@ -345,7 +354,7 @@ def baumwelch(obs,N,M, num_iters=0, debug=False,init_model=None, flag=False):
         delta = max_delta(model, old_model)
         if debug:
             print "Iters = %d, delta = %f, Log prob of sequences: %f" % (
-            iters, delta, loglikelihoods[-1])
+                                               iters, delta, loglikelihoods[-1])
         sys.stdout.flush()
 
         iters += 1
@@ -369,13 +378,15 @@ def baumwelch(obs,N,M, num_iters=0, debug=False,init_model=None, flag=False):
         smaller = 0.0002
         if improvement < smaller:
             if debug:
-                print "Converged. Log likelyhood improvement was less that %f.\n\n" % smaller
+                print ("Converged. Log likelyhood improvement was less that %f."
+                       "\n\n" % smaller)
             break
         
         if num_iters:
             if iters-1 == num_iters:
                 if debug:
-                    print "Maximum number of iterations (%s iterations) reached.\n\n" % (iters-1)
+                    print ("Maximum number of iterations (%s iterations) "
+                           "reached.\n\n" % (iters-1))
                 break
 
     (initial, tran_model, obs_model) = model
@@ -385,16 +396,12 @@ def baumwelch(obs,N,M, num_iters=0, debug=False,init_model=None, flag=False):
         return tran_model, obs_model, initial, loglikelihoods
 
 
-
-
-
-
 class HMM:
-    """ HMM Class that defines the parameters for HMM """
+    """HMM Class that defines the parameters for HMM"""
     def __init__(self, states, outputs):
         """If the hmm is going to be trained from data with labeled states,
-        states should be a list of the state names.  If the HMM is
-        going to trained using EM, states can just be range(num_states)."""
+        states should be a list of the state names.  If the HMM is going to be
+        trained using EM, states can just be range(num_states)."""
         self.states = states
         self.outputs = outputs
         n_s = len(states)
@@ -406,7 +413,7 @@ class HMM:
         self.observation = zeros([n_s, n_o])
 
     def set_hidden_model(self, init, trans, observ):
-        """ Debugging function: set the model parameters explicitly """
+        """Debugging function: set the model parameters explicitly"""
         self.num_states = len(init)
         self.num_outputs = len(observ[0])
         self.initial = array(init)
@@ -423,7 +430,6 @@ class HMM:
         self.log_initial = f(self.initial)
         self.log_transition = map(f, self.transition)
         self.log_observation = map(f, self.observation)
-        
 
     def __repr__(self):
         return """states = %s
@@ -433,17 +439,14 @@ observations = %s
        " ".join(array_to_string(self.outputs)), 
        string_of_model((self.initial, self.transition, self.observation), ""))
 
-     
     # declare the @ decorator just before the function, invokes print_timing()
     @print_timing
     def learn_from_labeled_data(self, state_seqs, obs_seqs):
+        """Learn the parameters given state and observations sequences. The
+        ordering of states in states[i][j] must correspond with
+        observations[i][j]. Uses Laplacian smoothing to avoid zero
+        probabilities.
         """
-        Learn the parameters given state and observations sequences. 
-        Tje ordering of states in states[i][j] must correspond with observations[i][j].
-        Uses Laplacian smoothing to avoid zero probabilities.
-        """
-
-        # initialize the counts at 1 for Laplacian smoothing
         count_initial = ones(self.num_states)
         count_transition = ones([self.num_states, self.num_states])
         count_observation = ones([self.num_states, self.num_outputs])
@@ -461,16 +464,13 @@ observations = %s
         self.observation = array(map(normalize, count_observation))
         self.compute_logs()
 
-                     
     # declare the @ decorator just before the function, invokes print_timing()
     @print_timing
     def learn_from_observations(self, instances, debug=False, flag=False):
+        """Learn hmm parameters based on the specified instances. This would
+        find the maximum likelyhood transition model, observation model, and
+        initial probabilities.
         """
-        Learn hmm parameters based on the specified instances.
-        This would find the maximum likelyhood transition model,
-        observation model, and initial probabilities.
-        """
-        #def baumwelch(obs,N,M, num_iters=0, debug=False,init_model=None, flag=False):   
         loglikelihoods = None
         if not flag:
             (self.transition, 
@@ -485,17 +485,15 @@ observations = %s
              self.observation,
              self.initial,
              loglikelihoods) = baumwelch(instances,
-                                       len(self.states), 
-                                       len(self.outputs), 
-                                       0,
-                                       debug, None, flag)
-            
+                                         len(self.states), 
+                                         len(self.outputs), 
+                                         0,
+                                         debug, None, flag)
         
         self.compute_logs()
 
         if flag:
             return loglikelihoods
-        
 
     # Return the log probability that this hmm assigns to a particular output
     # sequence
@@ -564,9 +562,8 @@ observations = %s
     
     
     def gen_random_sequence(self, n):
-        """
-        Use the underlying model to generate a sequence of 
-        n (state, observation) pairs
+        """Use the underlying model to generate a sequence of n
+        (state, observation) pairs
         """
         # pick a starting point
         state = random_from_dist(self.initial);
@@ -588,6 +585,7 @@ def get_wikipedia_model():
     hmm.set_hidden_model(init, trans, observ)
     return hmm
 
+
 def get_toy_model():
     hmm = HMM(['h1','h2'], ['A','B'])
     init = [0.6, 0.4]
@@ -595,7 +593,7 @@ def get_toy_model():
     observ = [[0.1,0.9], [0.9,0.1]]
     hmm.set_hidden_model(init, trans, observ)
     return hmm
-    
+
 
 def test():
     hmm = get_wikipedia_model()
@@ -606,7 +604,9 @@ def test():
     logp = hmm.log_prob_of_sequence(seq)
     p = exp(logp)
     print "prob ([walk, shop, clean]): logp= %f  p= %f" % (logp, p)
-    print "most likely states (walk, shop, clean) = %s" % hmm.most_likely_states(seq)
+    print "most likely states (walk, shop, clean) = %s" % (
+                                                    hmm.most_likely_states(seq))
+
 
 if __name__ == "__main__":
     test()
