@@ -5,6 +5,7 @@ from numpy import *
 from numexpr import *
 from bottleneck import *
 from math import log
+from itertools import product
 import copy
 import sys
 
@@ -189,7 +190,39 @@ def compute_expectation_step(obs, N, N_ho, N_h1h2, N_h1, N_h, model, debug=False
     note get_alpha() returns the likelihood of an observation seq and
     note that functions for getting beta, xi and gamma values are also implemented for you"""
     
-    raise Exception("Not implemented")
+    dataset_loglikelihood = 0.0
+    for seq in obs:
+        n = len(seq)
+        
+        alpha, loglikelihood = get_alpha(seq, model)
+        beta = get_beta(seq, model)
+        gamma = get_gamma(alpha, beta)
+        xi = get_xi(seq, alpha, beta, model)
+        
+        dataset_loglikelihood += loglikelihood
+                
+        if debug:
+            print "processing sequence: ", seq
+            print "alpha: "
+            format_array_print(alpha)
+            print "beta: "
+            format_array_print(beta)
+            print "gamma: "
+            format_array_print(gamma)
+            print "xi: \n", xi
+        
+        for t,j in product(xrange(n), xrange(N)):
+            N_ho[j,seq[t]] += gamma[t,j]
+        
+        for i,j in product(xrange(N), repeat=2):
+            N_h1h2[i,j] += sum(xi[:n-1,i,j])
+        
+        N_h1 += gamma[0,:]
+        
+        for j in xrange(N):
+            N_h[j] += sum(gamma[:,j])
+        
+    return dataset_loglikelihood
 
 
 def compute_maximization_step(N, M, N_ho, N_h1h2, N_h1, N_h, model, debug=False):
@@ -215,8 +248,19 @@ def compute_maximization_step(N, M, N_ho, N_h1h2, N_h1, N_h, model, debug=False)
     
     Return model, an updated hmm model of initial, transition and observation probs
     """
+    (initial, tran_model, obs_model) = model
     
-    raise Exception("Not implemented")
+    for i,j in product(xrange(N),xrange(M)):
+        obs_model[i,j] = N_ho[i,j] / N_h[i]
+    
+    for i in xrange(N):
+        s = sum(N_h1h2[i,:])
+        for j in xrange(N):
+            tran_model[i,j] = N_h1h2[i,j] / s
+    
+    initial = N_h1 / sum(N_h1)
+    
+    return (initial, tran_model, obs_model)
 
     
     
@@ -331,7 +375,7 @@ def baumwelch(obs,N,M, num_iters=0, debug=False,init_model=None, flag=False):
         if num_iters:
             if iters-1 == num_iters:
                 if debug:
-                    print "Maximum number of iterations (%s iterations) reached.\n\n" % iters-1
+                    print "Maximum number of iterations (%s iterations) reached.\n\n" % (iters-1)
                 break
 
     (initial, tran_model, obs_model) = model
@@ -401,18 +445,23 @@ observations = %s
         #print state_seqs
         #print obs_seqs
 
-#initialize everything
-        for i in range(self.num_states):
-            self.initial[i]+=1
-            for j in range(self.num_states):
-                self.transition[i][j] = 1
-            for j in range(self.num_outputs):
-                self.observation[i][j] = 1
-
-#self.initial
-        for i in range(len(state_seqs)):
-            self.initial[state_seqs[i][0]] += 1
-        self.initial = normalize(self.initial)
+        # initialize the counts at 1 for Laplacian smoothing
+        count_initial = ones(self.num_states)
+        count_transition = ones([self.num_states, self.num_states])
+        count_observation = ones([self.num_states, self.num_outputs])
+        
+        for i in xrange(len(state_seqs)):
+            count_initial[state_seqs[i][0]] += 1
+            n = len(state_seqs[i])
+            for j in xrange(n):
+                count_observation[state_seqs[i][j], obs_seqs[i][j]] += 1
+                if j != n-1:
+                    count_transition[state_seqs[i][j], state_seqs[i][j+1]] += 1
+        
+        self.initial = normalize(count_initial)
+        self.transition = array(map(normalize, count_transition))
+        self.observation = array(map(normalize, count_observation))
+        self.compute_logs()
 
 #transitions
         for i in range(len(state_seqs)):
@@ -479,7 +528,7 @@ observations = %s
         Uses Viterbi algorithm to compute this.
         """
         # Code modified from wikipedia
-        # Change this to use logs
+        # Changed to use logs
 
         cnt = 0
         states = range(0, self.num_states)
@@ -487,7 +536,6 @@ observations = %s
         for state in states:
             ##          V.path   V. prob.
             output = sequence[0]
-            #p = self.initial[state] * self.observation[state][output]
             p = self.log_initial[state] + self.log_observation[state][output]
             T[state] = ([state], p)
         for output in sequence[1:]:
@@ -502,11 +550,8 @@ observations = %s
                 valmax = None
                 for source_state in states:
                     (v_path, v_prob) = T[source_state]
-                    #p = (self.transition[source_state][next_state] *
-                    #     self.observation[next_state][output])
                     p = (self.log_transition[source_state][next_state] +
                          self.log_observation[next_state][output])
-                    #v_prob *= p
                     v_prob += p
 
                     if valmax is None or v_prob > valmax:
