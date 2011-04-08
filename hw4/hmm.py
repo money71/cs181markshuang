@@ -398,14 +398,37 @@ observations = %s
         Tje ordering of states in states[i][j] must correspond with observations[i][j].
         Uses Laplacian smoothing to avoid zero probabilities.
         """
+        #print state_seqs
+        #print obs_seqs
 
-        # Fill this in...
-#         self.initial = normalize(...)
-#         self.transition = ...
-#         self.observation = ...
-#         self.compute_logs()
-        raise Exception("Not implemented")
+#initialize everything
+        for i in range(self.num_states):
+            self.initial[i]+=1
+            for j in range(self.num_states):
+                self.transition[i][j] = 1
+            for j in range(self.num_outputs):
+                self.observation[i][j] = 1
 
+#self.initial
+        for i in range(len(state_seqs)):
+            self.initial[state_seqs[i][0]] += 1
+        self.initial = normalize(self.initial)
+
+#transitions
+        for i in range(len(state_seqs)):
+            for j in range(1,len(state_seqs[i])):
+                self.transition[state_seqs[i][j-1]][state_seqs[i][j]] += 1
+        for i in range(self.num_states):
+            self.transition[i] = normalize(self.transition[i])
+
+#observations
+        for i in range(len(state_seqs)):
+            for j in range(len(state_seqs[i])):
+                self.observation[state_seqs[i][j]][obs_seqs[i][j]] += 1
+        for i in range(self.num_states):
+            self.observation[i] = normalize(self.observation[i])
+
+        self.compute_logs()
 
                      
     # declare the @ decorator just before the function, invokes print_timing()
@@ -464,7 +487,8 @@ observations = %s
         for state in states:
             ##          V.path   V. prob.
             output = sequence[0]
-            p = self.initial[state] * self.observation[state][output]
+            #p = self.initial[state] * self.observation[state][output]
+            p = self.log_initial[state] + self.log_observation[state][output]
             T[state] = ([state], p)
         for output in sequence[1:]:
             cnt += 1
@@ -478,9 +502,12 @@ observations = %s
                 valmax = None
                 for source_state in states:
                     (v_path, v_prob) = T[source_state]
-                    p = (self.transition[source_state][next_state] *
-                         self.observation[next_state][output])
-                    v_prob *= p
+                    #p = (self.transition[source_state][next_state] *
+                    #     self.observation[next_state][output])
+                    p = (self.log_transition[source_state][next_state] +
+                         self.log_observation[next_state][output])
+                    #v_prob *= p
+                    v_prob += p
 
                     if valmax is None or v_prob > valmax:
                         argmax = v_path
