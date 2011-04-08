@@ -442,8 +442,6 @@ observations = %s
         Tje ordering of states in states[i][j] must correspond with observations[i][j].
         Uses Laplacian smoothing to avoid zero probabilities.
         """
-        #print state_seqs
-        #print obs_seqs
 
         # initialize the counts at 1 for Laplacian smoothing
         count_initial = ones(self.num_states)
@@ -461,22 +459,6 @@ observations = %s
         self.initial = normalize(count_initial)
         self.transition = array(map(normalize, count_transition))
         self.observation = array(map(normalize, count_observation))
-        self.compute_logs()
-
-#transitions
-        for i in range(len(state_seqs)):
-            for j in range(1,len(state_seqs[i])):
-                self.transition[state_seqs[i][j-1]][state_seqs[i][j]] += 1
-        for i in range(self.num_states):
-            self.transition[i] = normalize(self.transition[i])
-
-#observations
-        for i in range(len(state_seqs)):
-            for j in range(len(state_seqs[i])):
-                self.observation[state_seqs[i][j]][obs_seqs[i][j]] += 1
-        for i in range(self.num_states):
-            self.observation[i] = normalize(self.observation[i])
-
         self.compute_logs()
 
                      
