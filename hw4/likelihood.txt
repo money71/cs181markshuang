@@ -1,0 +1,185 @@
+learn_from_observations took 1614.000 ms
+Number of hidden states:  1
+Log Likelihood:  -12896.7892085
+learn_from_observations took 1596.000 ms
+Number of hidden states:  1
+Log Likelihood:  -12896.7892085
+learn_from_observations took 1536.000 ms
+Number of hidden states:  1
+Log Likelihood:  -12896.7892085
+learn_from_observations took 1645.000 ms
+Number of hidden states:  1
+Log Likelihood:  -12896.7892085
+learn_from_observations took 1661.000 ms
+Number of hidden states:  1
+Log Likelihood:  -12896.7892085
+learn_from_observations took 1504.000 ms
+Number of hidden states:  1
+Log Likelihood:  -12896.7892085
+learn_from_observations took 1558.000 ms
+Number of hidden states:  1
+Log Likelihood:  -12896.7892085
+learn_from_observations took 1620.000 ms
+Number of hidden states:  1
+Log Likelihood:  -12896.7892085
+learn_from_observations took 1505.000 ms
+Number of hidden states:  1
+Log Likelihood:  -12896.7892085
+learn_from_observations took 1526.000 ms
+Number of hidden states:  1
+Log Likelihood:  -12896.7892085
+
+learn_from_observations took 8014.000 ms
+Number of hidden states:  2
+Log Likelihood:  -12907.8678329
+learn_from_observations took 3425.000 ms
+Number of hidden states:  2
+Log Likelihood:  -12900.1063832
+learn_from_observations took 11314.000 ms
+Number of hidden states:  2
+Log Likelihood:  -12909.8222216
+learn_from_observations took 3670.000 ms
+Number of hidden states:  2
+Log Likelihood:  -12899.0452309
+learn_from_observations took 3314.000 ms
+Number of hidden states:  2
+Log Likelihood:  -12895.5322577
+learn_from_observations took 4350.000 ms
+Number of hidden states:  2
+Log Likelihood:  -12891.3725239
+learn_from_observations took 5536.000 ms
+Number of hidden states:  2
+Log Likelihood:  -12890.8919955
+learn_from_observations took 3333.000 ms
+Number of hidden states:  2
+Log Likelihood:  -12904.6301395
+learn_from_observations took 3254.000 ms
+Number of hidden states:  2
+Log Likelihood:  -12894.9419993
+learn_from_observations took 7471.000 ms
+Number of hidden states:  2
+Log Likelihood:  -12895.7122184
+
+learn_from_observations took 4675.000 ms
+Number of hidden states:  3
+Log Likelihood:  -12897.2947157
+learn_from_observations took 4608.000 ms
+Number of hidden states:  3
+Log Likelihood:  -12889.5324631
+learn_from_observations took 4805.000 ms
+Number of hidden states:  3
+Log Likelihood:  -12901.7656178
+learn_from_observations took 13016.000 ms
+Number of hidden states:  3
+Log Likelihood:  -12902.0639882
+learn_from_observations took 5742.000 ms
+Number of hidden states:  3
+Log Likelihood:  -12894.5640088
+learn_from_observations took 4673.000 ms
+Number of hidden states:  3
+Log Likelihood:  -12906.4315287
+learn_from_observations took 4471.000 ms
+Number of hidden states:  3
+Log Likelihood:  -12898.6269766
+learn_from_observations took 10022.000 ms
+Number of hidden states:  3
+Log Likelihood:  -12903.2553595
+learn_from_observations took 5870.000 ms
+Number of hidden states:  3
+Log Likelihood:  -12897.6933193
+learn_from_observations took 5746.000 ms
+Number of hidden states:  3
+Log Likelihood:  -12898.3363221
+
+learn_from_observations took 10855.000 ms
+Number of hidden states:  4
+Log Likelihood:  -12908.0913199
+learn_from_observations took 7345.000 ms
+Number of hidden states:  4
+Log Likelihood:  -12897.495968
+learn_from_observations took 14575.000 ms
+Number of hidden states:  4
+Log Likelihood:  -12905.7901534
+learn_from_observations took 5454.000 ms
+Number of hidden states:  4
+Log Likelihood:  -12891.336227
+learn_from_observations took 7424.000 ms
+Number of hidden states:  4
+Log Likelihood:  -12908.4433814
+learn_from_observations took 5470.000 ms
+Number of hidden states:  4
+Log Likelihood:  -12907.1607143
+learn_from_observations took 7439.000 ms
+Number of hidden states:  4
+Log Likelihood:  -12897.9674053
+learn_from_observations took 6080.000 ms
+Number of hidden states:  4
+Log Likelihood:  -12900.4510684
+learn_from_observations took 5871.000 ms
+Number of hidden states:  4
+Log Likelihood:  -12898.2415362
+learn_from_observations took 5893.000 ms
+Number of hidden states:  4
+Log Likelihood:  -12896.6063738
+
+learn_from_observations took 6704.000 ms
+Number of hidden states:  5
+Log Likelihood:  -12898.0751477
+learn_from_observations took 6696.000 ms
+Number of hidden states:  5
+Log Likelihood:  -12892.9536281
+learn_from_observations took 14010.000 ms
+Number of hidden states:  5
+Log Likelihood:  -12898.4914136
+learn_from_observations took 7023.000 ms
+Number of hidden states:  5
+Log Likelihood:  -12899.8886176
+learn_from_observations took 7100.000 ms
+Number of hidden states:  5
+Log Likelihood:  -12897.4940125
+learn_from_observations took 6716.000 ms
+Number of hidden states:  5
+Log Likelihood:  -12896.3985808
+learn_from_observations took 6709.000 ms
+Number of hidden states:  5
+Log Likelihood:  -12897.3672154
+learn_from_observations took 6677.000 ms
+Number of hidden states:  5
+Log Likelihood:  -12893.0401483
+learn_from_observations took 6665.000 ms
+Number of hidden states:  5
+Log Likelihood:  -12908.3992456
+learn_from_observations took 6509.000 ms
+Number of hidden states:  5
+Log Likelihood:  -12896.0857865
+
+learn_from_observations took 8544.000 ms
+Number of hidden states:  6
+Log Likelihood:  -12894.5544908
+learn_from_observations took 8576.000 ms
+Number of hidden states:  6
+Log Likelihood:  -12893.0104757
+learn_from_observations took 8316.000 ms
+Number of hidden states:  6
+Log Likelihood:  -12897.8543457
+learn_from_observations took 8914.000 ms
+Number of hidden states:  6
+Log Likelihood:  -12898.2932801
+learn_from_observations took 8397.000 ms
+Number of hidden states:  6
+Log Likelihood:  -12898.7618893
+learn_from_observations took 7889.000 ms
+Number of hidden states:  6
+Log Likelihood:  -12894.1835614
+learn_from_observations took 8088.000 ms
+Number of hidden states:  6
+Log Likelihood:  -12896.8798001
+learn_from_observations took 10921.000 ms
+Number of hidden states:  6
+Log Likelihood:  -12893.8493822
+learn_from_observations took 13378.000 ms
+Number of hidden states:  6
+Log Likelihood:  -12894.9529837
+learn_from_observations took 18759.000 ms
+Number of hidden states:  6
+Log Likelihood:  -12898.8630528

@@ -14,7 +14,7 @@ from viterbi import *
 from classify import *
 from dataset import DataSet
 
-MAX_NUM_HIDDEN_STATES = 6
+MAX_NUM_HIDDEN_STATES = 2
 
 class Robot(tftask.ChartTask):
     def get_name(self):
@@ -154,7 +154,7 @@ class BostonLikelihood(tftask.ChartTask):
         return ("Train HMMs with different number of hidden states to see how many hidden states does boston need to model its weather.")
     
     def task(self):
-	num_states = range(1, MAX_NUM_HIDDEN_STATES)
+	num_states = range(1, MAX_NUM_HIDDEN_STATES+1)
 	
 	filename = "weather_bos_la.data"
 	dataset = DataSet(filename)
