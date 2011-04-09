@@ -1,0 +1,1 @@
+FOR %%A IN (mean centroid) DO python clust.py --run_hac --hac_alg=%%A >> hac.txt
