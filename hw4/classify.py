@@ -107,6 +107,10 @@ def main(argv=None):
     # See how well we do in classifying test sequences
     fraction_incorrect = compute_classification_performance(hmms, dataset, options.verbose)   
     
+    print "Dataset: ", filename
+    print "Number of hidden states: ", num_states
+    print "Performance: ", (1-fraction_incorrect)
+    
     return 0
 
 if __name__ == "__main__":

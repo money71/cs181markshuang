@@ -14,7 +14,7 @@ from viterbi import *
 from classify import *
 from dataset import DataSet
 
-MAX_NUM_HIDDEN_STATES = 3
+MAX_NUM_HIDDEN_STATES = 6
 
 class Robot(tftask.ChartTask):
     def get_name(self):
@@ -57,7 +57,7 @@ class WeatherStates_boston_la(tftask.ChartTask):
         return ("Train HMMs with different number of hidden states, and see how well they can distinguish between the weather of different cities.")
     
     def task(self):
-	num_states = range(1, MAX_NUM_HIDDEN_STATES)
+	num_states = range(1, MAX_NUM_HIDDEN_STATES+1)
 	filename = "weather_bos_la.data"
 		
 	dataset_performance = []
@@ -89,7 +89,7 @@ class WeatherStates_boston_seattle(tftask.ChartTask):
         return ("Train HMMs with different number of hidden states, and see how well they can distinguish between the weather of different cities.")
     
     def task(self):
-	num_states = range(1, MAX_NUM_HIDDEN_STATES)
+	num_states = range(1, MAX_NUM_HIDDEN_STATES+1)
 	filename = "weather_bos_sea.data"
 		
 	dataset_performance = []
@@ -121,7 +121,7 @@ class WeatherStates_all(tftask.ChartTask):
         return ("Train HMMs with different number of hidden states, and see how well they can distinguish between the weather of different cities.")
     
     def task(self):
-	num_states = range(1, MAX_NUM_HIDDEN_STATES)
+	num_states = range(1, MAX_NUM_HIDDEN_STATES+1)
 	filename = "weather_all.data"
 		
 	dataset_performance = []
