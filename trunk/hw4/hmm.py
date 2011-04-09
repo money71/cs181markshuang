@@ -204,14 +204,11 @@ def compute_expectation_step(obs, N, N_ho, N_h1h2, N_h1, N_h, model,
         dataset_loglikelihood += loglikelihood
                 
         if debug:
-            print "sequence: ", seq
-            print "alpha: "
-            format_array_print(alpha)
-            print "beta: "
-            format_array_print(beta)
-            print "gamma: "
-            format_array_print(gamma)
-            print "xi: \n", xi
+            print "\n""Processing sequence: ", seq
+            print "alpha: \n", alpha
+            print "\n""beta: \n", beta
+            print "\n""gamma: \n", gamma
+            print "\n""xi: \n", xi, "\n"
         
         for t,j in product(xrange(n), xrange(N)):
             N_ho[j,seq[t]] += gamma[t,j]
