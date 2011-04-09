@@ -1,0 +1,1 @@
+FOR %%A IN (1 2 3 4 5 6) DO FOR %%N in (1 2 3 4 5) DO python likelihood.py %%A weather_bos_la.data >> likelihood.txt

@@ -1,0 +1,1 @@
+FOR %%A IN (weather_bos_la.data weather_bos_sea.data weather_all.data) DO FOR %%B IN (1 2 3 4 5 6) DO FOR %%N IN (1 2 3 4 5) DO python classify.py %%B %%A >> classify.txt

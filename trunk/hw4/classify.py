@@ -98,6 +98,9 @@ def main(argv=None):
         
     num_states = int(args[0])
     filename = args[1]
+    
+    print "Dataset: ", filename
+    
     filename = normalize_filename(filename)
 
     # Read all the data, then split it up into each category
@@ -107,7 +110,6 @@ def main(argv=None):
     # See how well we do in classifying test sequences
     fraction_incorrect = compute_classification_performance(hmms, dataset, options.verbose)   
     
-    print "Dataset: ", filename
     print "Number of hidden states: ", num_states
     print "Performance: ", (1-fraction_incorrect)
     
