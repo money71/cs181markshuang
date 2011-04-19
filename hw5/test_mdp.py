@@ -29,5 +29,5 @@ class MDPTest(unittest.TestCase):
         self.assertEqual(mdp.T( act(throw.CENTER, 1), 100, 80), mdp.T( act(throw.CENTER,1), 90, 70));
         bullseye = throw.location_to_score(throw.location(throw.CENTER, 1));
         self.assertEqual( mdp.T(act(throw.FIRST_PATCH, 1), 100, 100-bullseye), 0.1);  
-        self.assertEqual( mdp.T(act(throw.INNER_RING, 1), 100, 95), 0.5);  
+        self.assertAlmostEqual( mdp.T(act(throw.INNER_RING, 1), 100, 95), 0.5);  
         

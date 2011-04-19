@@ -18,7 +18,7 @@ EPOCH_SIZE = 10
 # list of all possible states.
 def get_states():
   # should return a **list** of states. Each state should be an integer.
-  return []
+  return range(0,throw.START_SCORE)
 
 # Returns a list of all possible actions, or targets, which include both a
 # wedge number and a ring.
@@ -33,14 +33,14 @@ def get_actions():
     actions = actions + [throw.location(throw.MIDDLE_RING, wedge)]
     actions = actions + [throw.location(throw.SECOND_PATCH, wedge)]
     actions = actions + [throw.location(throw.OUTER_RING, wedge)]
-    
+  print actions
   return actions
 
 # <CODE HERE>: Define the reward function
 def R(s,a):
   # takes a state s and action a
   # returns the reward for completing action a in state s
-  return 0.0;
+  return throw.START_SCORE - (s - 1)
 
 
 # Play a single game 
