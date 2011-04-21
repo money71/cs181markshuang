@@ -50,17 +50,17 @@ def T(a, s, s_prime):
                    a.ring + 2]
   scores = [[0 for i in range(5)] for j in range(5)]
   prob = 0.0
-  print "target: w=",a.wedge,"r=",a.ring
-  print "s=",s,"sp=",s_prime
-  print "wedges: ", wedge_nums
-  print "rings: ", ring_nums
+  #print "target: w=",a.wedge,"r=",a.ring
+  #print "s=",s,"sp=",s_prime
+  #print "wedges: ", wedge_nums
+  #print "rings: ", ring_nums
   
   for w in range(5):
     for r in range(5):
       score = throw.location_to_score(throw.location(ring_nums[r], wedge_nums[w]))
       if score == delta:
         p = wedge_probs[w] * ring_probs[r]
-        print prob, " + ", p
+        #print prob, " + ", p
         prob += p
   return prob
 
