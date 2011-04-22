@@ -10,7 +10,7 @@ import mdp
 import modelbased
 #import modelfree
 
-GAMMA = 0.0
+GAMMA = 0.5
 EPOCH_SIZE = 10
 
 

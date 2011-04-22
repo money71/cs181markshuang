@@ -17,7 +17,7 @@ states = darts.get_states()
 
 gamma = .5
 learning_rate = .1
-num_games = 50000
+num_games = 10
 
 def start_game():
     num_throws_this = 1
@@ -38,7 +38,7 @@ def get_target(score):
 # Exploration/exploitation strategy one.
 def ex_strategy_one(s,game_no):
   eps = float(num_games - game_no) / num_games
-  if(.8<eps):
+  if(.4<eps):
     return 1
   return 0
 
@@ -198,6 +198,7 @@ def mf(strategy):
 
 if __name__ == "__main__":
     
-    mf(ACTIVE_STRATEGY)
+    a =mf(ACTIVE_STRATEGY)
+    print "avg",a
 
     #a = modelfree(gamma, learning_rate, epoch_size, num_games, strategy_idx)
