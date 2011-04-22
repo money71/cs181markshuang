@@ -1,0 +1,4 @@
+strategy, epochs, num_games, result
+2  25  10  72
+2  35  10  69
+2  50  10  82
