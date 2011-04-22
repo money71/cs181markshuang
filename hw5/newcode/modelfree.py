@@ -19,20 +19,20 @@ gamma = .5
 learning_rate = .1
 num_games = 10
 
-def start_game():
-    num_throws_this = 1
-    last_action = throw.location(throw.INNER_RING, throw.NUM_WEDGES)
-    return(last_action)
+#def start_game():
+#    num_throws_this = 1
+#    last_action = throw.location(throw.INNER_RING, throw.NUM_WEDGES)
+#    return(last_action)
 
-def update_counts(score):
-    last_delta = score - last_state
-    update_T(last_state, last_action, last_delta)
+#def update_counts(score):
+#    last_delta = score - last_state
+#    update_T(last_state, last_action, last_delta)
 
-def get_target(score):
-    num_throws_this += 1
+#def get_target(score):
+#    num_throws_this += 1
 
-    if score <= throw.NUM_WEDGES: return throw.location(throw.SECOND_PATCH, score)
-    return(throw.location(throw.INNER_RING, throw.NUM_WEDGES))
+#    if score <= throw.NUM_WEDGES: return throw.location(throw.SECOND_PATCH, score)
+#    return(throw.location(throw.INNER_RING, throw.NUM_WEDGES))
 
 
 # Exploration/exploitation strategy one.

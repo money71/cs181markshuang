@@ -56,7 +56,6 @@ def T(a, s, s_prime):
       points = throw.location_to_score(throw.location(ring_num, wedge_num))
       if points == delta:
         p += probs[ri]*probs[wi]
-
   return p
 
 
