@@ -22,15 +22,32 @@ def get_target(score):
 
 # Define your first exploration/exploitation strategy here. Return 0 to exploit and 1 to explore. 
 # You may want to pass arguments from the modelbased function. 
-def ex_strategy_one():
-  if(random.random()<0.5):
-        return 0
-  return 1
+#def ex_strategy_one():
+#  if(random.random()<0.5):
+#        return 0
+#  return 1
 
 # Define your first exploration/exploitation strategy here. Return 0 to exploit and 1 to explore. 
 # You may want to pass arguments from the modelbased function.
-def ex_strategy_two():
+#def ex_strategy_two():
+#  return 1
+
+
+# Exploration/exploitation strategy one.
+def ex_strategy_one(s,game_no, num_games):
+  eps = float(throw.START_SCORE - s) / throw.START_SCORE
+  if(random.random()<eps):
+    return 0
   return 1
+
+
+# Exploration/exploitation strategy two.
+def ex_strategy_two(s,game_no, num_games):
+  eps = float(num_games - game_no) / num_games
+  eps += .1
+  if(random.random()<eps):
+    return 1
+  return 0
 
 # Implement a model-based reinforcement learning algorithm. 
 # Given num_games (the number of games to play), store the
@@ -80,9 +97,9 @@ def modelbased(gamma, epoch_size, num_games, strategy_idx):
             # strategies. Comment out the strategy that you wish not to use.
 			
     	    if(strategy_idx==1):
-    	        to_explore = ex_strategy_one()
+    	        to_explore = ex_strategy_one(s,g,num_games)
     	    else:
-	        to_explore = ex_strategy_two()
+	        to_explore = ex_strategy_two(s,g,num_games)
     		
             if to_explore:
             	# explore
