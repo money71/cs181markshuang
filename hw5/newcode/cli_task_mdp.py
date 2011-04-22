@@ -101,7 +101,7 @@ class QLearning(tftask.ChartTask):
 
 
 def main(argv):
-    mb(1)
+    mb(2)
     exit()
 
 if __name__ == "__main__":

@@ -37,10 +37,10 @@ def get_target(score):
 
 # Exploration/exploitation strategy one.
 def ex_strategy_one(s,game_no):
-  eps = float(throw.START_SCORE - s) / throw.START_SCORE
-  if(random.random()<eps):
-    return 0
-  return 1
+  eps = float(num_games - game_no) / num_games
+  if(.8<eps):
+    return 1
+  return 0
 
 
 # Exploration/exploitation strategy two.
@@ -198,6 +198,6 @@ def mf(strategy):
 
 if __name__ == "__main__":
     
-    mf(2)
+    mf(ACTIVE_STRATEGY)
 
     #a = modelfree(gamma, learning_rate, epoch_size, num_games, strategy_idx)

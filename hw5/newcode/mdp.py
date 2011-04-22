@@ -62,6 +62,7 @@ def T(a, s, s_prime):
         p = wedge_probs[w] * ring_probs[r]
         #print prob, " + ", p
         prob += p
+  #print "s",s,"a",a,"p(",s_prime,")=",prob
   return prob
 
 
@@ -113,5 +114,16 @@ def infiniteValueIteration(gamma):
     for s in states:
       if abs(V[s] - V_prime[s]) > EPSILON:
         notConverged = True
+  print PI
+  #print Q[0]
+  #print Q[1]
+  #print Q[2]
+  #print Q[3]
+  #print Q[4]
+  #print Q[5]
+  #print Q[6]
+  #print Q[7]
+  #print Q[8]
+  #print Q[9]
         
   

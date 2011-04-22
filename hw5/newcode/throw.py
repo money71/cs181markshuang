@@ -35,6 +35,12 @@ class location:
         self.ring = _ring
         self.wedge = _wedge
 
+    def __str__(self):
+        return "r" + str(self.ring) + "w" + str(self.wedge) + "s"+str(location_to_score(self))
+
+    def __repr__(self):
+        return "r" + str(self.ring) + "w" + str(self.wedge) + "s"+str(location_to_score(self))
+
 # Initialize the wedges and angles arrays #/
 
 
