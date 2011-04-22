@@ -107,5 +107,5 @@ def infiniteValueIteration(gamma):
     for s in states:
       if abs(V[s] - V_prime[s]) > EPSILON:
         notConverged = True
-        
+  print PI
   

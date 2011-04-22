@@ -40,6 +40,7 @@ class SimpleThrow(tftask.ChartTask):
                  "title": {"text": "Average #throws to finish vs. #games"}, 
                  "series": [ {"name": "Average policy performance", 
 	                      "data": listData} ] }
+	print darts.GAMMA
         return chart
 
 class ModelBasedOne(tftask.ChartTask):
