@@ -12,7 +12,7 @@ from tfutils import tftask
 
 num_games = 10
 #epochs = [25,35,50]
-epochs = [25, 35, 10]
+epochs = [25, 35, 50]
 
 class SimpleThrow(tftask.ChartTask):
     def get_name(self):

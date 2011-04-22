@@ -36,34 +36,28 @@ def T(a, s, s_prime):
 #CENTER, INNER_RING, FIRST_PATCH, MIDDLE_RING, SECOND_PATCH, OUTER_RING, MISS = range(7)
   #print throw.location_to_score(a)
   delta = s - s_prime
-  wedge_probs = [.1, .2, .4, .2, .1]
-  wedge_nums  = [ ((a.wedge - 2) % throw.NUM_WEDGES),\
-                  ((a.wedge - 1) % throw.NUM_WEDGES),\
-                  ((a.wedge    ) % throw.NUM_WEDGES),\
-                  ((a.wedge + 1) % throw.NUM_WEDGES),\
-                  ((a.wedge + 2) % throw.NUM_WEDGES)]
-  ring_probs = [.1, .2, .4, .2, .1]
-  ring_nums  = [ abs(a.ring - 2), \
-                   abs(a.ring - 1), \
-                   a.ring, \
-                   a.ring + 1, \
-                   a.ring + 2]
-  scores = [[0 for i in range(5)] for j in range(5)]
-  prob = 0.0
-  #print "target: w=",a.wedge,"r=",a.ring
-  #print "s=",s,"sp=",s_prime
-  #print "wedges: ", wedge_nums
-  #print "rings: ", ring_nums
+  p = 0.0
+  probs = [.1, .2, .4, .2, .1]
   
-  for w in range(5):
-    for r in range(5):
-      score = throw.location_to_score(throw.location(ring_nums[r], wedge_nums[w]))
-      if score == delta:
-        p = wedge_probs[w] * ring_probs[r]
-        #print prob, " + ", p
-        prob += p
-  #print "s",s,"a",a,"p(",s_prime,")=",prob
-  return prob
+  throw.init_board()
+  
+  if delta > 3*throw.NUM_WEDGES or delta < 0:
+    return 0
+  
+  for ri in range(5):
+    for wi in range(5):
+      wedge_num = throw.wedges[(throw.angles[a.wedge] - 2 + wi) %
+                               throw.NUM_WEDGES]
+      ring_num = a.ring - 2 + ri;
+      if ring_num > 6:
+        ring_num = 6
+      if ring_num < 0:
+        ring_num = ring_num*(-1)
+      
+      points = throw.location_to_score(throw.location(ring_num, wedge_num))
+      if points == delta:
+        p += probs[ri]*probs[wi]
+  return p
 
 
 def infiniteValueIteration(gamma):
