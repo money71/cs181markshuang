@@ -2,9 +2,13 @@ import common
 import game_interface
 from math import *
 
-R_VIS = 0.0
+R_VIS = -.5
 R_UNVIS = 1.0
-R_NEIGHBOR_BONUS = .6
+R_NEIGHBOR_BONUS = .7
+
+VI_H = 10
+VI_EXPLORE_WINDOW = 3
+VI_NEIGHBOR_WINDOW = 2
 
 P_LEFT = .15
 P_RIGHT = .15
@@ -12,8 +16,7 @@ P_FORWARD = .7
 
 def dist_penalty(x, y):
   d = sqrt(x*x + y*y)
-  #if d > 25:
-  #  return -.02 * pow(d-25, 1.5) 
+  return -.005 * pow(d, 1.4) 
   return 0
 
 
@@ -257,32 +260,46 @@ class MoveGenerator():
     self.R_arr[xi+50][yi+50] = v
     return
 
+  def get_num_nutri_neighbors(self, xi, yi, window=1, includeDiag = True, includeSelf = True):
+    r=0
+    for neighbor in self.get_neighbors((xi, yi), window, includeDiag, includeSelf):
+      if neighbor in self.visited and self.visited[neighbor] == 2:
+        r+=1
+    return r
+
+  def get_num_pois_neighbors(self, xi, yi, window=1, includeDiag = True, includeSelf = True):
+    r=0
+    for neighbor in self.get_neighbors((xi, yi), window, includeDiag, includeSelf):
+      if neighbor in self.visited and self.visited[neighbor] == 3:
+        r+=1
+    return r
+
   def R(self,xi, yi):
     # if we already visited it, penalize
     if (xi, yi) in self.visited:
       r = R_VIS
     else:
       r = R_UNVIS
-      for neighbor in self.get_neighbors((xi, yi), 1):
-        if neighbor in self.visited and self.visited[neighbor] == 2:
-          r += R_NEIGHBOR_BONUS
+      r += R_NEIGHBOR_BONUS * self.get_num_nutri_neighbors(xi, yi, VI_NEIGHBOR_WINDOW, True, True)
       r += dist_penalty(xi, yi)
     return r
 
-  def get_neighbors(self,center,window):
+  def get_neighbors(self,center,window, includeDiag = True, includeSelf = True):
     x, y = center
     neighbors = []
     for xi in range(x - window, x + window + 1):
       for yi in range(y - window, y + window + 1):
-        neighbors.append((xi, yi))
+        if      (includeSelf or ((xi!=x) and (yi!=y))) \
+            and (includeDiag or (abs(x-xi) + abs(y-yi)) <= window):
+          neighbors.append((xi, yi))
     return neighbors
 
-  def VI(self, center, steps=15, window=3):
+  def VI(self, center, steps=VI_H, window=VI_EXPLORE_WINDOW):
     V = {}
     Q = {}
     PI = {}
     
-    states = self.get_neighbors(center, window + 1)
+    states = self.get_neighbors(center, window + 1, True, True)
     states_window = self.get_neighbors(center, window)
     actions = (game_interface.UP, game_interface.LEFT, 
                game_interface.RIGHT, game_interface.DOWN)
@@ -360,7 +377,7 @@ class MoveGenerator():
     if last_plant == 2:
       self.lastNutri = self.calls - 1
         
-    #self.log_dup_move(view)
+    self.log_dup_move(view)
 
     x = view.GetXPos()
     y = view.GetYPos()
@@ -380,14 +397,18 @@ class MoveGenerator():
     if self.calls < 15 or (self.lastNutriX==0 and self.lastNutriY ==0):
       move = self.next_move_spiral_smart(x, y, self.centerX, self.centerY)
     else:
-      PI, Q = self.VI((x,y))
+      if self.lastNutri + 5 > self.calls:
+        PI, Q = self.VI((x,y))
+        #PI, Q = self.VI((self.lastNutriX,self.lastNutriY))
+      else:
+        PI, Q = self.VI((x,y))
       move = PI[(x, y)]
 
 
     self.lastX = view.GetXPos()
     self.lastY = view.GetYPos()
 
-    self.log_move(view, move, True)
+    #self.log_move(view, move, True)
     return (move, True)
     #return common.get_move(view)
 
