@@ -1,6 +1,11 @@
 import common
 import game_interface
+import classify
 from math import *
+from svmutil import *
+from dtreeutil import *
+from annutil import *
+from nbayesutil import *
 
 R_VIS = -.5
 R_UNVIS = 1.0
@@ -13,6 +18,11 @@ VI_NEIGHBOR_WINDOW = 2
 P_LEFT = .15
 P_RIGHT = .15
 P_FORWARD = .7
+
+mSVM = None
+mDT = None
+mANN = None
+mNBayes = None
 
 def dist_penalty(x, y):
   d = sqrt(x*x + y*y)
@@ -59,6 +69,7 @@ class MoveGenerator():
     self.centerY = 0
     self.lastLife = 0
     self.lastPlant = game_interface.STATUS_NO_PLANT
+    self.lastImg = []
     self.fdebug = open("p1.out","w")
     self.fmap = open("p1_map.out","w")
     self.fnutri = open("p1_nutri.out","a")
@@ -227,6 +238,7 @@ class MoveGenerator():
       return 0
       #self.fmap.flush()
     if self.lastPlant == game_interface.STATUS_UNKNOWN_PLANT:
+      self.lastImg = view.GetImage()
       nutri = self.lastLife < view.GetLife()
       if nutri:
         mapstr = "%d %d 2\n" % (self.lastX, self.lastY)
@@ -271,6 +283,13 @@ class MoveGenerator():
     r=0
     for neighbor in self.get_neighbors((xi, yi), window, includeDiag, includeSelf):
       if neighbor in self.visited and self.visited[neighbor] == 3:
+        r+=1
+    return r
+  
+  def get_num_vis_neighbors(self, xi, yi, window=1, includeDiag = True, includeSelf = True):
+    r=0
+    for neighbor in self.get_neighbors((xi, yi), window, includeDiag, includeSelf):
+      if neighbor in self.visited:
         r+=1
     return r
 
@@ -407,9 +426,19 @@ class MoveGenerator():
 
     self.lastX = view.GetXPos()
     self.lastY = view.GetYPos()
+    
+    
+    data = self.lastImg
+    data.append(self.lastX)
+    data.append(self.lastY)
+    data.append(get_num_nutri_neighbors(self.lastX, self.lastY))
+    data.append(get_num_pois_neighbors(self.lastX, self.lastY))
+    data.append(get_num_vis_neighbors(self.lastX, self.lastY))
+    
+    print data
 
     #self.log_move(view, move, True)
-    return (move, True)
+    return (move, classify.get_class(data))
     #return common.get_move(view)
 
   def init_point_settings(self, plant_bonus, plant_penalty, observation_cost,
@@ -436,4 +465,8 @@ def init_point_settings(plant_bonus, plant_penalty, observation_cost,
                         starting_life, life_per_turn):
   '''Called before any moves are made.  Allows you to make customizations based
   on the specific scoring parameters in the game.'''
+  mSVM = svm_load_model('svm.model')
+  mDT = dt_load_model('dt.model')
+  mANN = ann_load_model('ann.model')
+  mNBayes = ann_load_model('nbayes.model')
   move_generator.init_point_settings(plant_bonus, plant_penalty, observation_cost, starting_life, life_per_turn)
