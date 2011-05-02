@@ -3,6 +3,7 @@
 import common
 import game_interface
 
+import sys
 from os.path import abspath, dirname 
 path = dirname(abspath(__file__))
 sys.path.append(path)
