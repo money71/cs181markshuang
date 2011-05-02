@@ -11,5 +11,5 @@ def get_move(view):
     for i in xrange(5):
       view.GetImage()
   # Simulate taking some time to process
-  #time.sleep(0.1)
-  return (game_interface.UP, hasPlant)
+  time.sleep(0.1)
+  return (random.randint(0, 3), random.random() > 0.5)
