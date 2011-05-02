@@ -460,9 +460,9 @@ class MoveGenerator():
   
   def init_models(self, mSVM, mDT, mANN, mNBayes):
     self.mSVM = mSVM
-    self.mDT = mSVM
-    self.mANN = mSVM
-    self.mNBayes = mSVM
+    self.mDT = mDT
+    self.mANN = mANN
+    self.mNBayes = mNBayes
 
 move_generator = MoveGenerator()
 
