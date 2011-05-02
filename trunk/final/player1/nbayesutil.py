@@ -6,6 +6,9 @@ nbayesutil.py
 Convenience functions for accessing naive bayes.
 """
 
+from os.path import abspath, dirname 
+path = dirname(abspath(__file__))
+sys.path.append(path)
 
 import pickle
 import nbayes

@@ -1,6 +1,10 @@
 import common
 import game_interface
 import classify
+from os.path import abspath, dirname 
+path = dirname(abspath(__file__))
+sys.path.append(path)
+
 from math import *
 from svmutil import *
 from dtreeutil import *
@@ -465,8 +469,9 @@ def init_point_settings(plant_bonus, plant_penalty, observation_cost,
                         starting_life, life_per_turn):
   '''Called before any moves are made.  Allows you to make customizations based
   on the specific scoring parameters in the game.'''
-  mSVM = svm_load_model('player1/svm.model')
-  mDT = dt_load_model('player1/dt.model')
-  mANN = ann_load_model('player1/ann.model')
-  mNBayes = nbayes_load_model('player1/nbayes.model')
+  
+  mSVM = svm_load_model(path+'/svm.model')
+  mDT = dt_load_model(path+'/dt.model')
+  mANN = ann_load_model(path+'/ann.model')
+  mNBayes = nbayes_load_model(path+'/nbayes.model')
   move_generator.init_point_settings(plant_bonus, plant_penalty, observation_cost, starting_life, life_per_turn)
