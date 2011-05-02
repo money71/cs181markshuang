@@ -6,9 +6,6 @@ annutil.py
 Convenience functions for accessing neural networks.
 """
 
-from os.path import abspath, dirname 
-path = dirname(abspath(__file__))
-sys.path.append(path)
 
 import pickle
 import ann

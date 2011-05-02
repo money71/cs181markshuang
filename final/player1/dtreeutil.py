@@ -6,9 +6,6 @@ dtreeutil.py
 Convenience functions for accessing decision trees.
 """
 
-from os.path import abspath, dirname 
-path = dirname(abspath(__file__))
-sys.path.append(path)
 
 import pickle
 import dtree
