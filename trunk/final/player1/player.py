@@ -458,7 +458,7 @@ class MoveGenerator():
     self.life_per_turn = life_per_turn
     self.lastLife = starting_life
   
-  def init_models(mSVM, mDT, mANN, mNBayes):
+  def init_models(self, mSVM, mDT, mANN, mNBayes):
     self.mSVM = mSVM
     self.mDT = mSVM
     self.mANN = mSVM
