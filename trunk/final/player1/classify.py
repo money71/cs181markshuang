@@ -5,9 +5,7 @@ classify.py
 
 Classify data instances from trained models.
 """
-from os.path import abspath, dirname 
-path = dirname(abspath(__file__))
-sys.path.append(path)
+
 
 from string import *
 from svmutil import *
