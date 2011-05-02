@@ -183,7 +183,7 @@ class MoveGenerator():
     self.R_NEIGHBOR_BONUS = self.plant_bonus * self.NEIGHBOR_MULTIPLIER
     self.fdebug.write(str(self.R_VIS) + " " + str(self.R_UNVIS))
   
-  def init_models(self)
+  def init_models(self):
     self.mSVM = svm_load_model(join(path,'svm.model'))
     self.mDT = dt_load_model(join(path,'dt.model'))
     self.mANN = ann_load_model(join(path,'ann.model'))
@@ -432,10 +432,13 @@ class MoveGenerator():
         data.append(self.get_num_nutri_neighbors(self.lastX, self.lastY))
         data.append(self.get_num_pois_neighbors(self.lastX, self.lastY))
         data.append(8 - self.get_num_empty_neighbors(self.lastX, self.lastY))
+	
+	print data
         
         eat = classify.get_class(data, self.mSVM, self.mDT, self.mANN,
                                  self.mNBayes)
         self.log_move(view, move, eat)
+	print 'Eat? %s' % eat
         return (move, eat)
 
     self.log_move(view, move, False)
@@ -456,4 +459,5 @@ def init_point_settings(plant_bonus, plant_penalty, observation_cost,
                         starting_life, life_per_turn):
   '''Called before any moves are made.  Allows you to make customizations based
   on the specific scoring parameters in the game.'''
+  move_generator.init_models()
   move_generator.init_point_settings(plant_bonus, plant_penalty, observation_cost, starting_life, life_per_turn)
