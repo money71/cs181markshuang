@@ -465,8 +465,8 @@ def init_point_settings(plant_bonus, plant_penalty, observation_cost,
                         starting_life, life_per_turn):
   '''Called before any moves are made.  Allows you to make customizations based
   on the specific scoring parameters in the game.'''
-  mSVM = svm_load_model('svm.model')
-  mDT = dt_load_model('dt.model')
-  mANN = ann_load_model('ann.model')
-  mNBayes = ann_load_model('nbayes.model')
+  mSVM = svm_load_model('player1/svm.model')
+  mDT = dt_load_model('player1/dt.model')
+  mANN = ann_load_model('player1/ann.model')
+  mNBayes = ann_load_model('player1/nbayes.model')
   move_generator.init_point_settings(plant_bonus, plant_penalty, observation_cost, starting_life, life_per_turn)
