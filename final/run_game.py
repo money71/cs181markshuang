@@ -114,6 +114,9 @@ def run(options):
       print mv1, eat1, mv2, eat2
       print player1_view.GetLife(), player2_view.GetLife()
 
+    # Players might have exhausted all of their energy eating.
+    l1 = player1_view.GetLife()
+    l2 = player2_view.GetLife()
     if check_if_game_over(l1, l2, options, game, player1_view.GetRound()):
       break
 
