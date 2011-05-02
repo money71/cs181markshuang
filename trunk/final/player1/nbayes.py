@@ -68,7 +68,7 @@ class Bayes:
         """Classify an instance and return its probability."""
         categories = {}
         for (category, vector) in self.conditional.items():
-            prob = 1
+            prob = 1.0
             for i in range(len(vector)):
                 colProbability = .0000001
                 if instance[i] in vector[i]:
