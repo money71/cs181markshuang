@@ -468,5 +468,5 @@ def init_point_settings(plant_bonus, plant_penalty, observation_cost,
   mSVM = svm_load_model('player1/svm.model')
   mDT = dt_load_model('player1/dt.model')
   mANN = ann_load_model('player1/ann.model')
-  mNBayes = ann_load_model('player1/nbayes.model')
+  mNBayes = nbayes_load_model('player1/nbayes.model')
   move_generator.init_point_settings(plant_bonus, plant_penalty, observation_cost, starting_life, life_per_turn)

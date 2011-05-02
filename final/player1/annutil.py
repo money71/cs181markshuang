@@ -37,7 +37,7 @@ def ann_model(patTrain, ni, nh, no, N, iterations):
 
 def ann_save_model(filename, m):
     """Save a trained model to file."""
-    file = open(filename, 'w')
+    file = open(filename, 'wb')
     pickle.dump(m, file)
     file.close()
 
