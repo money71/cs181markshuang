@@ -662,35 +662,3 @@ def yield_boosted_folds(listInst, cFold):
     for tf in yield_cv_folds(listInst, cFold):
         listBf.append(BoostedFold(tf.listInstTraining,tf.listInstTest))
     return listBf
-
-
-def read_csv_dataset(infile):
-    listInst = []
-    for sRow in infile:
-        listRow = map(int, sRow.strip().split())
-        inst = Instance(map(int,listRow[:-1]), bool(listRow[-1]))
-        listInst.append(inst)
-    return listInst
-
-
-def load_csv_dataset(oFile):
-    if isinstance(oFile,basestring):
-        with open(oFile) as infile: return read_csv_dataset(infile)
-    return read_csv_dataset(infile)
-
-
-def main(argv):
-    import doctest
-    doctest.testmod()
-    listInst = load_csv_dataset("data.csv")
-    cFold = 10
-    iterableFolds = yield_cv_folds_with_validation(listInst,cFold)
-    #iterableFolds = yield_cv_folds(listInst,cFold)
-    #iterableFolds = yield_boosted_folds(listInst,cFold)
-    print "%.2f%% correct" % (100.0*cv_score(iterableFolds))
-    return 0
-
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
