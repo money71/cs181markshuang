@@ -439,9 +439,9 @@ class MoveGenerator():
     data = self.lastImg
     data.append(self.lastX)
     data.append(self.lastY)
-    data.append(get_num_nutri_neighbors(self.lastX, self.lastY))
-    data.append(get_num_pois_neighbors(self.lastX, self.lastY))
-    data.append(get_num_vis_neighbors(self.lastX, self.lastY))
+    data.append(self.get_num_nutri_neighbors(self.lastX, self.lastY))
+    data.append(self.get_num_pois_neighbors(self.lastX, self.lastY))
+    data.append(self.get_num_vis_neighbors(self.lastX, self.lastY))
     
     print data
 
