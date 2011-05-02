@@ -432,8 +432,6 @@ class MoveGenerator():
         data.append(self.get_num_nutri_neighbors(self.lastX, self.lastY))
         data.append(self.get_num_pois_neighbors(self.lastX, self.lastY))
         data.append(8 - self.get_num_empty_neighbors(self.lastX, self.lastY))
-	
-	print data
         
         eat = classify.get_class(data, self.mSVM, self.mDT, self.mANN,
                                  self.mNBayes)
