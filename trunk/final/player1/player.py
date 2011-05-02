@@ -1,11 +1,11 @@
 import common
 import game_interface
-import classify
 
 from os.path import abspath, dirname 
 path = dirname(abspath(__file__))
 sys.path.append(path)
 
+import classify
 from math import *
 from svmutil import *
 from dtreeutil import *
