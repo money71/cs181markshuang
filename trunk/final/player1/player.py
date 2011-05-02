@@ -435,8 +435,8 @@ class MoveGenerator():
     self.lastY = view.GetYPos()
     
     if view.GetPlantInfo() == game_interface.STATUS_UNKNOWN_PLANT:
-        self.lastImg = view.GetImage()
-        data = list(self.lastImg)
+        self.lastImg = list(view.GetImage())
+        data = self.lastImg
         data.append(self.lastX)
         data.append(self.lastY)
         data.append(self.get_num_nutri_neighbors(self.lastX, self.lastY))
