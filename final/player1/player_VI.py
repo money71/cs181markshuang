@@ -1,6 +1,20 @@
+#!/usr/bin/python
+
 import common
 import game_interface
 from math import *
+
+import sys
+from os.path import abspath, dirname, join
+path = dirname(abspath(__file__))
+sys.path.append(path)
+
+import classify
+from math import *
+from svmutil import *
+from dtreeutil import *
+from annutil import *
+from nbayesutil import *
 
 # number of nutri plants that must be observed before distance is weighted
 #towards centroid rather than origin
@@ -168,6 +182,12 @@ class MoveGenerator():
     self.R_UNVIS = self.plant_bonus * self.UNVIS_MULTIPLIER
     self.R_NEIGHBOR_BONUS = self.plant_bonus * self.NEIGHBOR_MULTIPLIER
     self.fdebug.write(str(self.R_VIS) + " " + str(self.R_UNVIS))
+  
+  def init_models(self)
+    self.mSVM = svm_load_model(join(path,'svm.model'))
+    self.mDT = dt_load_model(join(path,'dt.model'))
+    self.mANN = ann_load_model(join(path,'ann.model'))
+    self.mNBayes = nbayes_load_model(join(path,'nbayes.model'))
       
   def read_params(self):
     fparam = open(PARAM_FILE, "r")
@@ -404,9 +424,22 @@ class MoveGenerator():
     self.lastX = view.GetXPos()
     self.lastY = view.GetYPos()
     self.lastLife = view.GetLife()
+    
+    if view.GetPlantInfo() == game_interface.STATUS_UNKNOWN_PLANT:
+        data = list(view.GetImage())
+        data.append(self.lastX)
+        data.append(self.lastY)
+        data.append(self.get_num_nutri_neighbors(self.lastX, self.lastY))
+        data.append(self.get_num_pois_neighbors(self.lastX, self.lastY))
+        data.append(8 - self.get_num_empty_neighbors(self.lastX, self.lastY))
+        
+        eat = classify.get_class(data, self.mSVM, self.mDT, self.mANN,
+                                 self.mNBayes)
+        self.log_move(view, move, eat)
+        return (move, eat)
 
-    self.log_move(view, move, True)
-    return (move, True)
+    self.log_move(view, move, False)
+    return (move, False)
 
 move_generator = MoveGenerator()
 
