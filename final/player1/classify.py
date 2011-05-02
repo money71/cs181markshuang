@@ -5,7 +5,9 @@ classify.py
 
 Classify data instances from trained models.
 """
-
+from os.path import abspath, dirname 
+path = dirname(abspath(__file__))
+sys.path.append(path)
 
 from string import *
 from svmutil import *
@@ -49,10 +51,10 @@ def load(filename):
 
 def main():
     """Run classification over a validation set to test performance."""
-    mSVM = svm_load_model('svm.model')
-    mDT = dt_load_model('dt.model')
-    mANN = ann_load_model('ann.model')
-    mNBayes = nbayes_load_model('nbayes.model')
+    mSVM = svm_load_model(path+'/svm.model')
+    mDT = dt_load_model(path+'/dt.model')
+    mANN = ann_load_model(path+'/ann.model')
+    mNBayes = nbayes_load_model(path+'/nbayes.model')
     
     y, x = load('validate.dat')
     numTotal = len(x)
