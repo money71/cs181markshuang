@@ -426,21 +426,26 @@ class MoveGenerator():
     self.lastLife = view.GetLife()
     
     if view.GetPlantInfo() == game_interface.STATUS_UNKNOWN_PLANT:
-        data = list(view.GetImage())
-        data.append(self.lastX)
-        data.append(self.lastY)
-        data.append(self.get_num_nutri_neighbors(self.lastX, self.lastY))
-        data.append(self.get_num_pois_neighbors(self.lastX, self.lastY))
-        data.append(8 - self.get_num_empty_neighbors(self.lastX, self.lastY))
+        if self.lastLife < self.plant_penalty:
+            self.log_move(view, move, True)
+            return move, True
+        eat = []
+        for i in range(round((self.lastLife/100.0)/self.observation_cost)+1):
+            data = list(view.GetImage())
+            data.append(self.lastX)
+            data.append(self.lastY)
+            data.append(self.get_num_nutri_neighbors(self.lastX, self.lastY))
+            data.append(self.get_num_pois_neighbors(self.lastX, self.lastY))
+            data.append(8 - self.get_num_empty_neighbors(self.lastX, self.lastY))
         
-        eat = classify.get_class(data, self.mSVM, self.mDT, self.mANN,
-                                 self.mNBayes)
-        self.log_move(view, move, eat)
-	print 'Eat? %s' % eat
-        return (move, eat)
+            eat.append(classify.get_class(data, self.mSVM, self.mDT, self.mANN,
+                                          self.mNBayes))
+        isNutritious = (sum(eat)/len(eat) >= 0.5)
+        self.log_move(view, move, isNutritious)
+        return move, isNutritious
 
     self.log_move(view, move, False)
-    return (move, False)
+    return move, False
 
 move_generator = MoveGenerator()
 
