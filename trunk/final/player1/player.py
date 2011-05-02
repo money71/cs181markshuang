@@ -246,7 +246,6 @@ class MoveGenerator():
       return 0
       #self.fmap.flush()
     if self.lastPlant == game_interface.STATUS_UNKNOWN_PLANT:
-      self.lastImg = view.GetImage()
       nutri = self.lastLife < view.GetLife()
       if nutri:
         mapstr = "%d %d 2\n" % (self.lastX, self.lastY)
@@ -311,7 +310,7 @@ class MoveGenerator():
       r += dist_penalty(xi, yi)
     return r
 
-  def get_neighbors(self,center,window, includeDiag = True, includeSelf = True):
+  def get_neighbors(self,center,window, includeDiag = True, includeSelf = False):
     x, y = center
     neighbors = []
     for xi in range(x - window, x + window + 1):
@@ -435,19 +434,22 @@ class MoveGenerator():
     self.lastX = view.GetXPos()
     self.lastY = view.GetYPos()
     
-    
-    data = self.lastImg
-    data.append(self.lastX)
-    data.append(self.lastY)
-    data.append(self.get_num_nutri_neighbors(self.lastX, self.lastY))
-    data.append(self.get_num_pois_neighbors(self.lastX, self.lastY))
-    data.append(self.get_num_vis_neighbors(self.lastX, self.lastY))
-    
-    print data
+    if view.GetPlantInfo() == game_interface.STATUS_UNKNOWN_PLANT:
+        self.lastImg = view.GetImage()
+        data = self.lastImg
+        data.append(self.lastX)
+        data.append(self.lastY)
+        data.append(self.get_num_nutri_neighbors(self.lastX, self.lastY))
+        data.append(self.get_num_pois_neighbors(self.lastX, self.lastY))
+        data.append(self.get_num_vis_neighbors(self.lastX, self.lastY))
+        
+        print data
 
-    #self.log_move(view, move, True)
-    return (move, classify.get_class(data, self.mSVM, self.mDT, self.mANN, self.mNBayes))
-    #return common.get_move(view)
+        #self.log_move(view, move, True)
+        return (move, classify.get_class(data, self.mSVM, self.mDT, self.mANN, self.mNBayes))
+        #return common.get_move(view)
+    
+    return (move, False)
 
   def init_point_settings(self, plant_bonus, plant_penalty, observation_cost,
                           starting_life, life_per_turn):
