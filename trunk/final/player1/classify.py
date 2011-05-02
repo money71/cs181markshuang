@@ -52,7 +52,7 @@ def main():
     mSVM = svm_load_model('svm.model')
     mDT = dt_load_model('dt.model')
     mANN = ann_load_model('ann.model')
-    mNBayes = ann_load_model('nbayes.model')
+    mNBayes = nbayes_load_model('nbayes.model')
     
     y, x = load('validate.dat')
     numTotal = len(x)

@@ -49,7 +49,7 @@ def dt_build_model(listInst, cRounds):
 
 def dt_save_model(filename, m):
     """Save a trained model to file."""
-    file = open(filename, 'w')
+    file = open(filename, 'wb')
     pickle.dump(m, file)
     file.close()
 
