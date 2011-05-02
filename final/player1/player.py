@@ -446,7 +446,7 @@ class MoveGenerator():
     print data
 
     #self.log_move(view, move, True)
-    return (move, classify.get_class(data))
+    return (move, classify.get_class(data, self.mSVM, self.mDT, self.mANN, self.mNBayes))
     #return common.get_move(view)
 
   def init_point_settings(self, plant_bonus, plant_penalty, observation_cost,
@@ -457,6 +457,12 @@ class MoveGenerator():
     self.starting_life = starting_life
     self.life_per_turn = life_per_turn
     self.lastLife = starting_life
+  
+  def init_models(mSVM, mDT, mANN, mNBayes):
+    self.mSVM = mSVM
+    self.mDT = mSVM
+    self.mANN = mSVM
+    self.mNBayes = mSVM
 
 move_generator = MoveGenerator()
 
@@ -478,4 +484,5 @@ def init_point_settings(plant_bonus, plant_penalty, observation_cost,
   mDT = dt_load_model(path+'/dt.model')
   mANN = ann_load_model(path+'/ann.model')
   mNBayes = nbayes_load_model(path+'/nbayes.model')
+  move_generator.init_models(mSVM, mDT, mANN, mNBayes)
   move_generator.init_point_settings(plant_bonus, plant_penalty, observation_cost, starting_life, life_per_turn)
