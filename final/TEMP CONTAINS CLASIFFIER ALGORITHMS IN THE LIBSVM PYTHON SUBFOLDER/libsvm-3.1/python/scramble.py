@@ -1,6 +1,15 @@
 #!/usr/bin/python
 
+"""
+scramble.py
+
+Takes an input file and scrambles the lines around randomly. Useful for
+generating balanced randomized data sets to train on.
+"""
+
+
 import random
+
 
 def main():
     f = open("train.out")
@@ -15,5 +24,6 @@ def main():
     o.close()
     f.close()
 
+
 if __name__ == "__main__":
-  main()
+    main()

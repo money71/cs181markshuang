@@ -1,21 +1,25 @@
 #!/usr/bin/env python
 
 """
-dtree.py -- CS181 Assignment 1: Decision Trees
+dtree.py
 
 Implements decision trees, decision stumps, decision tree pruning, and
-adaptive boosting.
+adaptive boosting, copied from CS181 homework
 """
 
+
 import math
+
 
 def log2(dbl):
     return math.log(dbl)/math.log(2.0) if dbl > 0.0 else 0.0
 
+
 class Instance(object):
     """Describes a piece of data. The features are contained in listAttrs,
     the instance label in fLabel, and the instance weight (for use in boosting)
-    in dblWeight."""
+    in dblWeight.
+    """
     def __init__(self, listAttrs, fLabel=None, dblWeight=1.0):
         self.listAttrs = listAttrs
         self.fLabel = fLabel
@@ -29,6 +33,7 @@ class Instance(object):
         return ("Instance(%r, %r, %.2f)"
                 % (self.listAttrs, self.fLabel, self.dblWeight))
 
+
 def compute_entropy(dblWeightTrue,dblWeightFalse):
     """ Given the total weight of true instances and the total weight
     of false instances in a collection, return the entropy of this
@@ -38,21 +43,25 @@ def compute_entropy(dblWeightTrue,dblWeightFalse):
     >>> compute_entropy(0.0001, 0.0)
     -0.0
     >>> compute_entropy(10.0,10.0)
-    1.0"""
+    1.0
+    """
     t = dblWeightTrue / (dblWeightTrue + dblWeightFalse)
     f = dblWeightFalse / (dblWeightTrue + dblWeightFalse)
     return -t*log2(t) - f*log2(f)
+
 
 def separate_by_attribute(listInst, ixAttr):
     """Build a dictionary mapping attribute values to lists of instances.
     
     >>> separate_by_attribute([Instance([5,0],True),Instance([9,0],True)], 0)
-    {9: [Instance([9, 0], True)], 5: [Instance([5, 0], True)]}"""
+    {9: [Instance([9, 0], True)], 5: [Instance([5, 0], True)]}
+    """
     d = {}
     for inst in listInst:
         attrVal = inst.listAttrs[ixAttr]
         d.setdefault(attrVal, []).append(inst)
     return d
+
 
 def compute_entropy_of_split(dictInst):
     """Compute the average entropy of a mapping of attribute values to lists
@@ -63,7 +72,8 @@ def compute_entropy_of_split(dictInst):
     >>> listInst1 = [Instance([],False,3.0), Instance([],True,0.0)]
     >>> dictInst = {0: listInst0, 1: listInst1}
     >>> compute_entropy_of_split(dictInst)
-    0.25"""
+    0.25
+    """
     wtotal = 0
     etotal = 0
     for k, v in dictInst.iteritems():
@@ -74,8 +84,10 @@ def compute_entropy_of_split(dictInst):
         wtotal += w
     return etotal / wtotal
 
+
 def compute_list_entropy(listInst):
     return compute_entropy_of_split({None:listInst})
+
 
 def choose_split_attribute(iterableIxAttr, listInst, dblMinGain=0.0):
     """Given an iterator over attributes, choose the attribute which
@@ -88,7 +100,8 @@ def choose_split_attribute(iterableIxAttr, listInst, dblMinGain=0.0):
 
     >>> listInst = [Instance([0,0],False), Instance([0,1],True)]
     >>> choose_split_attribute([0,1], listInst)
-    (1, {0: [Instance([0, 0], False)], 1: [Instance([0, 1], True)]})"""
+    (1, {0: [Instance([0, 0], False)], 1: [Instance([0, 1], True)]})
+    """
     bestattr = None
     bestgain = dblMinGain
     etotal = compute_list_entropy(listInst)
@@ -102,6 +115,7 @@ def choose_split_attribute(iterableIxAttr, listInst, dblMinGain=0.0):
         return None, None
     return bestattr, separate_by_attribute(listInst,bestattr)
 
+
 def check_for_common_label(listInst):
     """Return the boolean label shared by all instances in the given list of
     instances, or None if no such label exists.
@@ -110,7 +124,8 @@ def check_for_common_label(listInst):
     True
     >>> check_for_common_label([Instance([],False), Instance([],False)])
     False
-    >>> check_for_common_label([Instance([],True), Instance([],False)])"""
+    >>> check_for_common_label([Instance([],True), Instance([],False)])
+    """
     val = None
     for inst in listInst:
         if val is None:
@@ -118,6 +133,7 @@ def check_for_common_label(listInst):
         if val != inst.fLabel:
             return None
     return val
+
 
 def majority_label(listInst):
     """Return the boolean label with the most weight in the given list of
@@ -127,7 +143,8 @@ def majority_label(listInst):
     True
     >>> listInst =[Instance([],False),Instance([],True),Instance([],False)]
     >>> majority_label(listInst)
-    False"""
+    False
+    """
     tw = 0
     fw = 0
     for inst in listInst:
@@ -136,6 +153,7 @@ def majority_label(listInst):
         else:
             fw += inst.dblWeight
     return tw > fw
+
 
 class DTree(object):
     def __init__(self, fLabel=None, ixAttr=None, fDefaultLabel=None):
@@ -189,6 +207,7 @@ class DTree(object):
         self._append_repr(listRepr)
         return "".join(listRepr)
 
+
 def build_tree_rec(setIxAttr, listInst, dblMinGain, cRemainingLevels):
     """Recursively build a decision tree.
 
@@ -216,7 +235,8 @@ def build_tree_rec(setIxAttr, listInst, dblMinGain, cRemainingLevels):
 
     When building tree nodes, the function specifies the majority label across
     listInst as the node's default label (fDefaultLabel argument to DTree's
-    __init__). This will be useful in pruning."""
+    __init__). This will be useful in pruning.
+    """
     label = check_for_common_label(listInst)
     if label is not None:
         return DTree(fLabel = label)
@@ -232,6 +252,7 @@ def build_tree_rec(setIxAttr, listInst, dblMinGain, cRemainingLevels):
     for k,v in newdict.iteritems():
         d.add(build_tree_rec(setIxPrime,v,dblMinGain, cRemainingLevels-1), k)
     return d
+
 
 def count_instance_attributes(listInst):
     """Return the number of attributes across all instances, or None if the
@@ -253,13 +274,15 @@ def count_instance_attributes(listInst):
 
 def build_tree(listInst, dblMinGain=0.0, cMaxLevel=-1):
     """Build a decision tree with the ID3 algorithm from a list of
-    instances."""
+    instances.
+    """
     cAttr = count_instance_attributes(listInst)
     if cAttr is None:
         raise TypeError("Instances provided have attribute lists of "
                         "varying lengths.")
     setIxAttr = set(xrange(cAttr))
     return build_tree_rec(setIxAttr, listInst, dblMinGain, cMaxLevel)
+
 
 def classify(dt, inst):
     """Using decision tree dt, return the label for instance inst."""
@@ -269,11 +292,13 @@ def classify(dt, inst):
         return classify(dt.dictChildren[inst.listAttrs[dt.ixAttr]], inst)
     return dt.fDefaultLabel
 
+
 class EvaluationResult(object):
     def __init__(self, listInstCorrect, listInstIncorrect, oClassifier):
         self.listInstCorrect = listInstCorrect
         self.listInstIncorrect = listInstIncorrect
         self.oClassifier = oClassifier
+
 
 def weight_correct_incorrect(rslt):
     """Return a pair of floating-point numbers denoting the weight of
@@ -283,7 +308,8 @@ def weight_correct_incorrect(rslt):
     >>> listInstIncorrect = [Instance([],False,0.50)]
     >>> rslt = EvaluationResult(listInstCorrect, listInstIncorrect, None)
     >>> weight_correct_incorrect(rslt)
-    (0.25, 0.5)"""
+    (0.25, 0.5)
+    """
     c = 0
     i = 0
     for inst in rslt.listInstCorrect:
@@ -291,6 +317,7 @@ def weight_correct_incorrect(rslt):
     for inst in rslt.listInstIncorrect:
         i += inst.dblWeight
     return c, i
+
 
 class CrossValidationFold(object):
     def build(self):
@@ -302,6 +329,7 @@ class CrossValidationFold(object):
             if inst.fLabel is None:
                 raise TypeError("missing instance label")
         return listInst
+
 
 class TreeFold(CrossValidationFold):
     def __init__(self, listInstTraining, listInstTest, listInstValidate=None):
@@ -315,6 +343,7 @@ class TreeFold(CrossValidationFold):
     def classify(self, dt, inst):
         return classify(dt,inst)
 
+
 def evaluate_classification(cvf):
     """Given a CrossValidationFold, build a classifier and build an
     EvaluationResult that correctly partitions test instances into a list of
@@ -324,7 +353,8 @@ def evaluate_classification(cvf):
 
     Evaluation results are built with
     EvaluationResult(listInstCorrect,listInstIncorrect,dt)
-    where dt is the classifier built with cvf.build()."""
+    where dt is the classifier built with cvf.build().
+    """
     lc = []
     li = []
     dt = cvf.build()
@@ -335,6 +365,7 @@ def evaluate_classification(cvf):
             li.append(inst)
     evalRslt = EvaluationResult(lc,li,dt)
     return evalRslt
+
 
 def check_folds(listInst, cFold, cMinFold):
     """Raise a ValueError if cFold is greater than the number of instances, or
@@ -348,19 +379,22 @@ def check_folds(listInst, cFold, cMinFold):
     >>> check_folds([Instance([],False)], 1, 2)
     Traceback (most recent call last):
     ...
-    ValueError: Need at least 2 folds."""
+    ValueError: Need at least 2 folds.
+    """
     if cFold > len(listInst):
         raise ValueError('Cannot have more folds than instances')
     if cFold < cMinFold:
         raise ValueError('Need at least %d folds' % (cMinFold))
     return
 
+
 def yield_cv_folds(listInst, cFold):
     """Yield a series of TreeFolds, which represent a partition of listInst
     into cFold folds.
 
     You may either return a list, or `yield` (http://goo.gl/gwOfM)
-    TreeFolds one at a time."""
+    TreeFolds one at a time.
+    """
     check_folds(listInst, cFold, 2)
     n = len(listInst)
     foldsize = int(math.ceil(n / cFold))
@@ -374,9 +408,11 @@ def yield_cv_folds(listInst, cFold):
         ret.append(TreeFold(training, test))
     return ret
 
+
 def cv_score(iterableFolds):
     """Determine the fraction (by weight) of correct instances across a number
-    of cross-validation folds."""
+    of cross-validation folds.
+    """
     c = 0.0
     i = 0.0
     for fold in iterableFolds:
@@ -384,6 +420,7 @@ def cv_score(iterableFolds):
         c += cp
         i += ip
     return c/(c+i)
+
 
 def prune_tree(dt, listInst):
     """Recursively prune a decision tree.
@@ -393,7 +430,8 @@ def prune_tree(dt, listInst):
     become a leaf.
 
     The function does not return anything, and instead modifies the tree
-    in-place."""
+    in-place.
+    """
     score = 0
     scorePruned = 0
     if dt.is_leaf():
@@ -410,14 +448,17 @@ def prune_tree(dt, listInst):
     if scorePruned >= score:
         dt.convert_to_leaf()
 
+
 def build_pruned_tree(listInstTrain, listInstValidate):
     """Build a pruned decision tree from a list of training instances, then
     prune the tree using a list of validation instances.
 
-    Return the pruned decision tree."""
+    Return the pruned decision tree.
+    """
     dt = build_tree(listInstTrain)
     prune_tree(dt, listInstValidate)
     return dt
+
 
 class PrunedFold(TreeFold):
     def __init__(self, *args, **kwargs):
@@ -428,11 +469,13 @@ class PrunedFold(TreeFold):
     def build(self):
         return build_pruned_tree(self.listInstTraining,self.listInstValidate)
 
+
 def yield_cv_folds_with_validation(listInst, cFold):
     """Yield a number cFold of PrunedFolds, which together form a partition of
     the list of instances listInst.
 
-    You may either return a list or yield successive values."""
+    You may either return a list or yield successive values.
+    """
     check_folds(listInst, cFold, 3)
     n = len(listInst)
     foldsize = int(math.ceil(n / cFold))
@@ -452,6 +495,7 @@ def yield_cv_folds_with_validation(listInst, cFold):
         ret.append(PrunedFold(training, test, validate))
     return ret
 
+
 def normalize_weights(listInst):
     """Normalize the weights of all the instances in listInst so that the sum
     of their weights totals to 1.0.
@@ -462,12 +506,14 @@ def normalize_weights(listInst):
     >>> listInst = [Instance([],True,0.1), Instance([],False,0.3)]
     >>> normalize_weights(listInst)
     >>> print listInst
-    [Instance([], True, 0.25), Instance([], False, 0.75)]"""
+    [Instance([], True, 0.25), Instance([], False, 0.75)]
+    """
     t = 0
     for i in listInst:
         t += i.dblWeight
     for i in listInst:
         i.dblWeight = i.dblWeight/t
+
 
 def init_weights(listInst):
     """Initialize the weights of the instances in listInst so that each
@@ -477,10 +523,12 @@ def init_weights(listInst):
     >>> listInst = [Instance([],True,0.5), Instance([],True,0.25)]
     >>> init_weights(listInst)
     >>> print listInst
-    [Instance([], True, 0.50), Instance([], True, 0.50)]"""
+    [Instance([], True, 0.50), Instance([], True, 0.50)]
+    """
     for i in listInst:
         i.dblWeight = 1.0
     normalize_weights(listInst)
+
 
 def classifier_error(rslt):
     """Given and evaluation result, return the (floating-point) fraction
@@ -490,23 +538,29 @@ def classifier_error(rslt):
     >>> listInstIncorrect = [Instance([],True,0.45)]
     >>> rslt = EvaluationResult(listInstCorrect,listInstIncorrect,None)
     >>> classifier_error(rslt)
-    0.75"""
+    0.75
+    """
     c, i = weight_correct_incorrect(rslt)
     return i / (c+i)
 
+
 def classifier_weight(dblError):
     """Return the classifier weight alpha from the classifier's training
-    error."""
+    error.
+    """
     return 0.5 * math.log((1.0-dblError) / dblError)
+
 
 def update_weight_unnormalized(inst, dblClassifierWeight, fClassifiedLabel):
     """Re-weight an instance given the classifier weight, and the label
     assigned to the instance by the classifier. This function acts in place
-    and does not return anything."""
+    and does not return anything.
+    """
     if inst.fLabel == fClassifiedLabel:
         inst.dblWeight = inst.dblWeight * math.exp(-dblClassifierWeight)
     else:
         inst.dblWeight = inst.dblWeight * math.exp(dblClassifierWeight)
+
 
 class StumpFold(TreeFold):
     def __init__(self, listInstTraining, cMaxLevel=1):
@@ -515,6 +569,7 @@ class StumpFold(TreeFold):
         self.cMaxLevel = cMaxLevel
     def build(self):
         return build_tree(self.listInstTraining, cMaxLevel=self.cMaxLevel)
+
 
 def one_round_boost(listInst, cMaxLevel):
     """Conduct a single round of boosting on a list of instances. Returns a
@@ -533,7 +588,8 @@ def one_round_boost(listInst, cMaxLevel):
     - normalize all weights
     - return the EvaluationResult's oClassifier member, the classifier error,
       and the classifier weight in a 3-tuple
-    - remember to return early if the error is zero."""
+    - remember to return early if the error is zero.
+    """
     sf = StumpFold(listInst, cMaxLevel)
     eRslt = evaluate_classification(sf)
     e = classifier_error(eRslt)
@@ -547,14 +603,17 @@ def one_round_boost(listInst, cMaxLevel):
     normalize_weights(listInst)
     return eRslt.oClassifier, e, w
 
+
 class BoostResult(object):
     def __init__(self, listDblCferWeight, listCfer):
         self.listDblCferWeight = listDblCferWeight
         self.listCfer = listCfer
 
+
 def boost(listInst, cMaxRounds=50, cMaxLevel=1):
     """Conduct up to cMaxRounds of boosting on training instances listInst
-    and return a BoostResult containing the classifiers and their weights."""
+    and return a BoostResult containing the classifiers and their weights.
+    """
     init_weights(listInst)
     lw = []
     lc = []
@@ -569,14 +628,16 @@ def boost(listInst, cMaxRounds=50, cMaxLevel=1):
             lw.append(w)
     return BoostResult(lw, lc)
 
+
 def classify_boosted(br,inst):
     """Given a BoostResult and an instance, return the (boolean) label
-    predicted for the instance by the boosted classifier."""
+    predicted for the instance by the boosted classifier.
+    """
     result = 0
     for dblCferWeight, cfer in zip (br.listDblCferWeight, br.listCfer):
         result += dblCferWeight*(classify(cfer, inst)-0.5)
     return result >= 0
-        
+
 
 class BoostedFold(TreeFold):
     def __init__(self, *args, **kwargs):
@@ -589,16 +650,19 @@ class BoostedFold(TreeFold):
     def classify(self, br, inst):
         return classify_boosted(br, inst)
 
+
 def yield_boosted_folds(listInst, cFold):
     """Yield a number cFold of BoostedFolds, constituting a partition of
     listInst.
 
     Implementation suggestion: Generate TreeFolds, and yield BoostedFolds
-    built from your TreeFolds."""
+    built from your TreeFolds.
+    """
     listBf = []
     for tf in yield_cv_folds(listInst, cFold):
         listBf.append(BoostedFold(tf.listInstTraining,tf.listInstTest))
     return listBf
+
 
 def read_csv_dataset(infile):
     listInst = []
@@ -608,10 +672,12 @@ def read_csv_dataset(infile):
         listInst.append(inst)
     return listInst
 
+
 def load_csv_dataset(oFile):
     if isinstance(oFile,basestring):
         with open(oFile) as infile: return read_csv_dataset(infile)
     return read_csv_dataset(infile)
+
 
 def main(argv):
     import doctest
@@ -623,7 +689,6 @@ def main(argv):
     #iterableFolds = yield_boosted_folds(listInst,cFold)
     print "%.2f%% correct" % (100.0*cv_score(iterableFolds))
     return 0
-
 
 
 if __name__ == "__main__":
