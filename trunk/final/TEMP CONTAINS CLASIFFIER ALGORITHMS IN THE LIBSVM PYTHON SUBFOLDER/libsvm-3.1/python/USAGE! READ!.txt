@@ -1,7 +1,0 @@
-scramble takes a dataset and scrambles the lines around randomly (to generate balanced datasets, I copied a couple thousand nutritious images and a couple thousand poisonous images into a dat file and then scrambled it)
-
-learnmodels intelligently tries to determine the best parameters for each algorithm, and then stores the resulting model in [algorithm].model
-
-classify is a basic file used to retrieve models and classify instances (eventually to be hooked into by the robot)
-
-util files include helper functions to parse data, the remaining files implement the various algorithms.
