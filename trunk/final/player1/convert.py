@@ -12,8 +12,8 @@ from string import *
 
 
 def main():
-    f = open("test.dat")
-    o = open("test_new.dat", "w")
+    f = open("train.dat")
+    o = open("train_new.dat", "w")
     
     data = []
     targets = []
