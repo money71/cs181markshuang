@@ -16,7 +16,7 @@ from nbayesutil import *
 
 # SVM parameters found using libsvm tools with cross-validated grid search.
 CVALS = [512]
-GVALS = [0.000030517578125]
+GVALS = [0.0001220703125]
 # DT parameter
 MAXROUNDS = 30
 # NN parameters
