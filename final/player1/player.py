@@ -471,7 +471,7 @@ class MoveGenerator():
             return move, True
         # classify if outside cutoff and health is not low
         eat = []
-        num_images = round(abs((1.0*self.plant_bonus)/self.plant_penalty)/self.observation_cost+1)
+        num_images = round(abs((1.0*self.plant_bonus)/self.plant_penalty)/self.observation_cost)
         for i in range(int(num_images)):
             data = list(view.GetImage())
             eat.append(classify.get_class(data, self.mSVM, self.mDT, self.mANN,
