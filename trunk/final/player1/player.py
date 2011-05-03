@@ -430,18 +430,11 @@ class MoveGenerator():
             self.log_move(view, move, True)
             return move, True
         eat = []
-        for i in range(round((self.lastLife/100.0)/self.observation_cost)+1):
+        num_images = min(int(round((self.lastLife/100.0)/self.observation_cost)+1),
+                         self.plant_bonus/2)
+        for i in range(num_images):
             data = list(view.GetImage())
-            data.append(self.get_num_nutri_neighbors(self.lastX, self.lastY))
-            data.append(self.get_num_pois_neighbors(self.lastX, self.lastY))
             data.append(int(sqrt(self.lastX*self.lastX+self.lastY*self.lastY)))
-            data.append(8 - self.get_num_empty_neighbors(self.lastX, self.lastY))
-            data.append(self.get_num_nutri_neighbors(self.lastX, self.lastY,2))
-            data.append(self.get_num_pois_neighbors(self.lastX, self.lastY,2))
-            data.append(24 - self.get_num_empty_neighbors(self.lastX, self.lastY,2))
-            data.append(self.get_num_nutri_neighbors(self.lastX, self.lastY,3))
-            data.append(self.get_num_pois_neighbors(self.lastX, self.lastY,3))
-            data.append(48 - self.get_num_empty_neighbors(self.lastX, self.lastY,3))
         
             eat.append(classify.get_class(data, self.mSVM, self.mDT, self.mANN,
                                           self.mNBayes))

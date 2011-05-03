@@ -430,8 +430,8 @@ class MoveGenerator():
             self.log_move(view, move, True)
             return move, True
         eat = []
-        num_images = min[int(round((self.lastLife/100.0)/self.observation_cost)+1),
-                         self.plant_bonus/2]
+        num_images = min(int(round((self.lastLife/100.0)/self.observation_cost)+1),
+                         self.plant_bonus/2)
         for i in range(num_images):
             data = list(view.GetImage())
         
