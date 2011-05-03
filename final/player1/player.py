@@ -35,7 +35,7 @@ PARAM_FILE = "p"+PID+".conf"
 # and is irrelevant when close
 def dist_penalty(x, y, steps):
   d = sqrt(x*x + y*y)
-  return -.009  * pow(d, 1.3) 
+  return -.009  * pow(d, 1.35) 
   return 0
 
 
@@ -154,20 +154,16 @@ class MoveGenerator():
     self.centerY = 0
     self.lastLife = 0
     self.lastPlant = game_interface.STATUS_NO_PLANT
-    self.fdebug = open("p"+PID+".out","w")
-    self.fmap = open("p"+PID+"_map.out","w")
-    self.fnutri = open("p"+PID+"_nutri.out","a")
-    self.fpois = open("p"+PID+"_pois.out","a")
 
-    self.VIS_MULTIPLIER = -.5   # * life_per_turn = R_VIS
-    self.UNVIS_MULTIPLIER = .05 # * plant_bonus = R_UNVIS
-    self.R_NEIGHBOR_BONUS = .05  # * plant_bonus = R_NEIGHBOR_BONUS
-    self.VI_H = 10
-    self.VI_EXPLORE_WINDOW = 3
+    self.VIS_MULTIPLIER = -1.2   # * life_per_turn = R_VIS
+    self.UNVIS_MULTIPLIER = .08 # * plant_bonus = R_UNVIS
+    self.NEIGHBOR_MULTIPLIER = .07  # * plant_bonus = R_NEIGHBOR_BONUS
+    self.VI_H = 12
+    self.VI_EXPLORE_WINDOW = 8
     self.VI_NEIGHBOR_WINDOW = 2
 
-    if PARAM_FILE != "":
-      self.read_params()
+    #if PARAM_FILE != "":
+    #  self.read_params()
 
   def init_point_settings(self, plant_bonus, plant_penalty, observation_cost,
                           starting_life, life_per_turn):
@@ -177,18 +173,36 @@ class MoveGenerator():
     self.starting_life = starting_life
     self.life_per_turn = life_per_turn
     self.lastLife = starting_life
+    
+    # distance to start classifying and stop blindly eating (based on density of
+    # nutritious vs. poisonous plants by distance)
+    threshold = abs((1.0*plant_penalty)/plant_bonus)
+    if threshold > 0.7717:
+        self.classifyDistance = 12
+    elif threshold > 0.5974:
+        self.classifyDistance = 16
+    elif threshold > 0.4066:
+        self.classifyDistance = 20
+    elif threshold > 0.3251:
+        self.classifyDistance = 24
+    elif threshold > 0.2183:
+        self.classifyDistance = 28
+    elif threshold > 0.1663:
+        self.classifyDistance = 32
+    else:
+        self.classifyDistance = 36
 
     self.R_VIS = self.life_per_turn * self.VIS_MULTIPLIER
     self.R_UNVIS = self.plant_bonus * self.UNVIS_MULTIPLIER
     self.R_NEIGHBOR_BONUS = self.plant_bonus * self.NEIGHBOR_MULTIPLIER
-    self.fdebug.write(str(self.R_VIS) + " " + str(self.R_UNVIS))
+    #self.fdebug.write(str(self.R_VIS) + " " + str(self.R_UNVIS))
   
   def init_models(self):
     self.mSVM = svm_load_model(join(path,'svm.model'))
     self.mDT = dt_load_model(join(path,'dt.model'))
     self.mANN = ann_load_model(join(path,'ann.model'))
     self.mNBayes = nbayes_load_model(join(path,'nbayes.model'))
-      
+    
   def read_params(self):
     fparam = open(PARAM_FILE, "r")
     st = fparam.readline()
@@ -236,32 +250,32 @@ class MoveGenerator():
     #  return self.direction_away_center(xi, xi, x0, y0)
     return direction_perp_center(xi, yi, x0, y0)
       
-  def log_move(self, view, move, eat):
-    x = view.GetXPos()
-    y = view.GetYPos()
-    self.fdebug.write("(%d, %d)" % (x , y))
-    self.fdebug.write(" %d" % view.GetPlantInfo())
-    if move == game_interface.RIGHT:
-      self.destY = y
-      self.destX = x + 1
-      self.fdebug.write(" >")
-    if move == game_interface.DOWN:
-      self.destY = y -1
-      self.destX = x
-      self.fdebug.write(" v")
-    if move == game_interface.LEFT:
-      self.destY = y
-      self.destX = x - 1
-      self.fdebug.write(" <")
-    if move == game_interface.UP:
-      self.destY = y + 1
-      self.destX = x
-      self.fdebug.write(" ^")
-    if eat:
-      self.fdebug.write(" E")
-    self.fdebug.write(" (CENTR: %d %d)"%(self.centroidX, self.centroidY))
-    self.fdebug.write("\n")
-    #self.fdebug.flush()
+#  def log_move(self, view, move, eat):
+#    x = view.GetXPos()
+#    y = view.GetYPos()
+#    self.fdebug.write("(%d, %d)" % (x , y))
+#    self.fdebug.write(" %d" % view.GetPlantInfo())
+#    if move == game_interface.RIGHT:
+#      self.destY = y
+#      self.destX = x + 1
+#      self.fdebug.write(" >")
+#    if move == game_interface.DOWN:
+#      self.destY = y -1
+#      self.destX = x
+#      self.fdebug.write(" v")
+#    if move == game_interface.LEFT:
+#      self.destY = y
+#      self.destX = x - 1
+#      self.fdebug.write(" <")
+#    if move == game_interface.UP:
+#      self.destY = y + 1
+#      self.destX = x
+#      self.fdebug.write(" ^")
+#    if eat:
+#      self.fdebug.write(" E")
+#    self.fdebug.write(" (CENTR: %d %d)"%(self.centroidX, self.centroidY))
+#    self.fdebug.write("\n")
+#    #self.fdebug.flush()
 
 #return 2 for nutri, 3 for pois, 0 for no plant, 1 for eaten plant
   def log_last_plant(self, view):
@@ -269,7 +283,7 @@ class MoveGenerator():
       self.centerX = self.lastNutriX
       self.centerY = self.lastNutriY
       mapstr = "%d %d 1\n" % (self.lastX, self.lastY)
-      self.fmap.write(mapstr)
+      #self.fmap.write(mapstr)
       return 0
     if self.lastPlant == game_interface.STATUS_UNKNOWN_PLANT:
       nutri = self.lastLife < view.GetLife()
@@ -282,25 +296,25 @@ class MoveGenerator():
         self.numNutri += 1
         self.centroidX = self.totalNutriX / self.numNutri
         self.centroidY = self.totalNutriY / self.numNutri
-        self.fmap.write(mapstr)
+        #self.fmap.write(mapstr)
         return 2
       else:
         mapstr = "%d %d 3\n" % (self.lastX, self.lastY)
-        self.fmap.write(mapstr)
+        #self.fmap.write(mapstr)
         return 3
     return 1
 
-  def log_dup_move(self,view):
-    if (view.GetXPos(), view.GetYPos()) in self.visited:
-      self.fdebug.write("1\n")
-    else:
-      self.fdebug.write("0\n")
+#  def log_dup_move(self,view):
+#    if (view.GetXPos(), view.GetYPos()) in self.visited:
+#      self.fdebug.write("1\n")
+#    else:
+#      self.fdebug.write("0\n")
 
-  def log_last_move(self,view):
-    if view.GetXPos() != self.destX or view.GetYPos() != self.destY:
-      self.fdebug.write("1\n")
-    else:
-      self.fdebug.write("0\n")
+#  def log_last_move(self,view):
+#    if view.GetXPos() != self.destX or view.GetYPos() != self.destY:
+#      self.fdebug.write("1\n")
+#    else:
+#      self.fdebug.write("0\n")
 
   def get_num_nutri_neighbors(self, xi, yi, window=1, includeDiag = True, includeSelf = True):
     r=0
@@ -336,7 +350,10 @@ class MoveGenerator():
   def R(self,xi, yi, current_time, clusterMode):
     # if we already visited it, penalize
     if (xi, yi) in self.visited:
-      r = self.R_VIS
+      if clusterMode:
+        r = 2*self.R_VIS
+      else:
+        r = self.R_VIS
     else:
       r = self.R_UNVIS
       r += self.R_NEIGHBOR_BONUS * self.get_num_nutri_neighbors(xi, yi, self.VI_NEIGHBOR_WINDOW, False, False)
@@ -347,7 +364,7 @@ class MoveGenerator():
           r += dist_penalty(xi, yi, current_time)
 ####################################### HACK ALERT ########################################
       else:
-        r -= .1 * dist_penalty(xi - self.centroidX, yi - self.centroidY, current_time)
+        r -= .05 * dist_penalty(xi - self.centroidX, yi - self.centroidY, current_time)
     return r
 
 # NOTE: this is not the best version of VI because it assumes that
@@ -360,7 +377,7 @@ class MoveGenerator():
     PI = {}
 
     if clusterMode:
-      window = window+1/2
+      window = (window)/2
     
     states = self.get_neighbors(center, window + 1, True, True)
     states_window = self.get_neighbors(center, window, False, True)
@@ -424,25 +441,23 @@ class MoveGenerator():
     self.lastX = view.GetXPos()
     self.lastY = view.GetYPos()
     self.lastLife = view.GetLife()
-    
+
     if view.GetPlantInfo() == game_interface.STATUS_UNKNOWN_PLANT:
-        if self.lastLife < self.plant_penalty:
-            self.log_move(view, move, True)
+        # eat everything  if not outside of cutoff radius
+        if abs(self.lastX)+abs(self.lastY) < self.classifyDistance:
             return move, True
+        # eat if health is low
+        if self.lastLife < self.plant_penalty:
+            return move, True
+        # classify if outside cutoff and health is not low
         eat = []
-        num_images = min(int(round((self.lastLife/100.0)/self.observation_cost)+1),
-                         self.plant_bonus/2)
-        for i in range(num_images):
+        num_images = round(abs((1.0*self.plant_bonus)/self.plant_penalty)/self.observation_cost)
+        for i in range(int(num_images)):
             data = list(view.GetImage())
-            data.append(int(sqrt(self.lastX*self.lastX+self.lastY*self.lastY)))
-        
             eat.append(classify.get_class(data, self.mSVM, self.mDT, self.mANN,
                                           self.mNBayes))
-        isNutritious = (sum(eat)/len(eat) > 0.5)
-        self.log_move(view, move, isNutritious)
+        isNutritious = ((1.0*sum(eat))/len(eat) > 0.5)
         return move, isNutritious
-
-    self.log_move(view, move, False)
     return move, False
 
 move_generator = MoveGenerator()
