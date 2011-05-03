@@ -447,7 +447,7 @@ class MoveGenerator():
         
             eat.append(classify.get_class(data, self.mSVM, self.mDT, self.mANN,
                                           self.mNBayes))
-        isNutritious = (sum(eat)/len(eat) >= 0.5)
+        isNutritious = (sum(eat)/len(eat) > 0.5)
         self.log_move(view, move, isNutritious)
         return move, isNutritious
 
