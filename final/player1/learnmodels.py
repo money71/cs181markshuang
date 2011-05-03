@@ -15,15 +15,15 @@ from nbayesutil import *
 
 
 # SVM parameters found using libsvm tools with cross-validated grid search.
-CVALS = [2]
-GVALS = [0.03125]
+CVALS = [512]
+GVALS = [0.000030517578125]
 # DT parameter
-MAXROUNDS = 100
+MAXROUNDS = 30
 # NN parameters
 EPOCHS = 30
 RESTARTS = 3
 LRATE = 0.05
-HIDDEN = [10,20,30]
+HIDDEN = [20]
 
 
 def load(filename):
@@ -39,8 +39,6 @@ def load(filename):
         y = eval(yt)
         for i in range(len(x)):
             x[i] = eval(x[i])
-        x[-4] = x[-4]/10
-        x[-5] = x[-5]/10
         data.append(x)
         targets.append(y)
     

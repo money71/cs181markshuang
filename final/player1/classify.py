@@ -23,7 +23,7 @@ def get_class(data, mSVM, mDT, mANN, mNBayes):
     labelANN = ann_predict(data, mANN)
     labelNBayes = nbayes_predict(data, mNBayes)
     
-    return (labelSVM + labelDT + labelANN + labelNBayes) / 4.0 >= 0.5
+    return (0.4*labelSVM + 0.1*labelDT + 0.2*labelANN + 0.3*labelNBayes) >= 0.5
 
 
 def load(filename):
@@ -39,8 +39,6 @@ def load(filename):
         y = eval(yt)
         for i in range(len(x)):
             x[i] = eval(x[i])
-        x[-4] = x[-4] / 10
-        x[-5] = x[-5] / 10
         data.append(x)
         targets.append(y)
     
