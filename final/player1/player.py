@@ -178,19 +178,19 @@ class MoveGenerator():
     # nutritious vs. poisonous plants by distance)
     threshold = abs((1.0*plant_penalty)/plant_bonus)
     if threshold > 0.7717:
-        self.classifyDistance = 12
-    elif threshold > 0.5974:
         self.classifyDistance = 16
-    elif threshold > 0.4066:
+    elif threshold > 0.5974:
         self.classifyDistance = 20
-    elif threshold > 0.3251:
+    elif threshold > 0.4066:
         self.classifyDistance = 24
-    elif threshold > 0.2183:
+    elif threshold > 0.3251:
         self.classifyDistance = 28
-    elif threshold > 0.1663:
+    elif threshold > 0.2183:
         self.classifyDistance = 32
-    else:
+    elif threshold > 0.1663:
         self.classifyDistance = 36
+    else:
+        self.classifyDistance = 40
 
     self.R_VIS = self.life_per_turn * self.VIS_MULTIPLIER
     self.R_UNVIS = self.plant_bonus * self.UNVIS_MULTIPLIER
@@ -451,7 +451,7 @@ class MoveGenerator():
             return move, True
         # classify if outside cutoff and health is not low
         eat = []
-        num_images = round(abs((1.0*self.plant_bonus)/self.plant_penalty)/self.observation_cost)
+        num_images = round(abs((1.0*self.plant_bonus)/self.plant_penalty)/self.observation_cost+1)
         for i in range(int(num_images)):
             data = list(view.GetImage())
             eat.append(classify.get_class(data, self.mSVM, self.mDT, self.mANN,
