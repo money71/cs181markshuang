@@ -1,20 +1,6 @@
-#!/usr/bin/python
-
 import common
 import game_interface
 from math import *
-
-import sys
-from os.path import abspath, dirname, join
-path = dirname(abspath(__file__))
-sys.path.append(path)
-
-import classify
-from math import *
-from svmutil import *
-from dtreeutil import *
-from annutil import *
-from nbayesutil import *
 
 # number of nutri plants that must be observed before distance is weighted
 #towards centroid rather than origin
@@ -35,7 +21,7 @@ PARAM_FILE = "p"+PID+".conf"
 # and is irrelevant when close
 def dist_penalty(x, y, steps):
   d = sqrt(x*x + y*y)
-  return -.009  * pow(d, 1.3) 
+  return -.009  * pow(d, 1.35) 
   return 0
 
 
@@ -154,20 +140,16 @@ class MoveGenerator():
     self.centerY = 0
     self.lastLife = 0
     self.lastPlant = game_interface.STATUS_NO_PLANT
-    self.fdebug = open("p"+PID+".out","w")
-    self.fmap = open("p"+PID+"_map.out","w")
-    self.fnutri = open("p"+PID+"_nutri.out","a")
-    self.fpois = open("p"+PID+"_pois.out","a")
 
-    self.VIS_MULTIPLIER = -.5   # * life_per_turn = R_VIS
-    self.UNVIS_MULTIPLIER = .05 # * plant_bonus = R_UNVIS
-    self.R_NEIGHBOR_BONUS = .05  # * plant_bonus = R_NEIGHBOR_BONUS
-    self.VI_H = 10
-    self.VI_EXPLORE_WINDOW = 3
+    self.VIS_MULTIPLIER = -1.2   # * life_per_turn = R_VIS
+    self.UNVIS_MULTIPLIER = .08 # * plant_bonus = R_UNVIS
+    self.NEIGHBOR_MULTIPLIER = .07  # * plant_bonus = R_NEIGHBOR_BONUS
+    self.VI_H = 12
+    self.VI_EXPLORE_WINDOW = 8
     self.VI_NEIGHBOR_WINDOW = 2
 
-    if PARAM_FILE != "":
-      self.read_params()
+    #if PARAM_FILE != "":
+    #  self.read_params()
 
   def init_point_settings(self, plant_bonus, plant_penalty, observation_cost,
                           starting_life, life_per_turn):
@@ -181,13 +163,7 @@ class MoveGenerator():
     self.R_VIS = self.life_per_turn * self.VIS_MULTIPLIER
     self.R_UNVIS = self.plant_bonus * self.UNVIS_MULTIPLIER
     self.R_NEIGHBOR_BONUS = self.plant_bonus * self.NEIGHBOR_MULTIPLIER
-    self.fdebug.write(str(self.R_VIS) + " " + str(self.R_UNVIS))
-  
-  def init_models(self):
-    self.mSVM = svm_load_model(join(path,'svm.model'))
-    self.mDT = dt_load_model(join(path,'dt.model'))
-    self.mANN = ann_load_model(join(path,'ann.model'))
-    self.mNBayes = nbayes_load_model(join(path,'nbayes.model'))
+    #self.fdebug.write(str(self.R_VIS) + " " + str(self.R_UNVIS))
       
   def read_params(self):
     fparam = open(PARAM_FILE, "r")
@@ -236,32 +212,32 @@ class MoveGenerator():
     #  return self.direction_away_center(xi, xi, x0, y0)
     return direction_perp_center(xi, yi, x0, y0)
       
-  def log_move(self, view, move, eat):
-    x = view.GetXPos()
-    y = view.GetYPos()
-    self.fdebug.write("(%d, %d)" % (x , y))
-    self.fdebug.write(" %d" % view.GetPlantInfo())
-    if move == game_interface.RIGHT:
-      self.destY = y
-      self.destX = x + 1
-      self.fdebug.write(" >")
-    if move == game_interface.DOWN:
-      self.destY = y -1
-      self.destX = x
-      self.fdebug.write(" v")
-    if move == game_interface.LEFT:
-      self.destY = y
-      self.destX = x - 1
-      self.fdebug.write(" <")
-    if move == game_interface.UP:
-      self.destY = y + 1
-      self.destX = x
-      self.fdebug.write(" ^")
-    if eat:
-      self.fdebug.write(" E")
-    self.fdebug.write(" (CENTR: %d %d)"%(self.centroidX, self.centroidY))
-    self.fdebug.write("\n")
-    #self.fdebug.flush()
+#  def log_move(self, view, move, eat):
+#    x = view.GetXPos()
+#    y = view.GetYPos()
+#    self.fdebug.write("(%d, %d)" % (x , y))
+#    self.fdebug.write(" %d" % view.GetPlantInfo())
+#    if move == game_interface.RIGHT:
+#      self.destY = y
+#      self.destX = x + 1
+#      self.fdebug.write(" >")
+#    if move == game_interface.DOWN:
+#      self.destY = y -1
+#      self.destX = x
+#      self.fdebug.write(" v")
+#    if move == game_interface.LEFT:
+#      self.destY = y
+#      self.destX = x - 1
+#      self.fdebug.write(" <")
+#    if move == game_interface.UP:
+#      self.destY = y + 1
+#      self.destX = x
+#      self.fdebug.write(" ^")
+#    if eat:
+#      self.fdebug.write(" E")
+#    self.fdebug.write(" (CENTR: %d %d)"%(self.centroidX, self.centroidY))
+#    self.fdebug.write("\n")
+#    #self.fdebug.flush()
 
 #return 2 for nutri, 3 for pois, 0 for no plant, 1 for eaten plant
   def log_last_plant(self, view):
@@ -269,7 +245,7 @@ class MoveGenerator():
       self.centerX = self.lastNutriX
       self.centerY = self.lastNutriY
       mapstr = "%d %d 1\n" % (self.lastX, self.lastY)
-      self.fmap.write(mapstr)
+      #self.fmap.write(mapstr)
       return 0
     if self.lastPlant == game_interface.STATUS_UNKNOWN_PLANT:
       nutri = self.lastLife < view.GetLife()
@@ -282,25 +258,25 @@ class MoveGenerator():
         self.numNutri += 1
         self.centroidX = self.totalNutriX / self.numNutri
         self.centroidY = self.totalNutriY / self.numNutri
-        self.fmap.write(mapstr)
+        #self.fmap.write(mapstr)
         return 2
       else:
         mapstr = "%d %d 3\n" % (self.lastX, self.lastY)
-        self.fmap.write(mapstr)
+        #self.fmap.write(mapstr)
         return 3
     return 1
 
-  def log_dup_move(self,view):
-    if (view.GetXPos(), view.GetYPos()) in self.visited:
-      self.fdebug.write("1\n")
-    else:
-      self.fdebug.write("0\n")
+#  def log_dup_move(self,view):
+#    if (view.GetXPos(), view.GetYPos()) in self.visited:
+#      self.fdebug.write("1\n")
+#    else:
+#      self.fdebug.write("0\n")
 
-  def log_last_move(self,view):
-    if view.GetXPos() != self.destX or view.GetYPos() != self.destY:
-      self.fdebug.write("1\n")
-    else:
-      self.fdebug.write("0\n")
+#  def log_last_move(self,view):
+#    if view.GetXPos() != self.destX or view.GetYPos() != self.destY:
+#      self.fdebug.write("1\n")
+#    else:
+#      self.fdebug.write("0\n")
 
   def get_num_nutri_neighbors(self, xi, yi, window=1, includeDiag = True, includeSelf = True):
     r=0
@@ -336,7 +312,10 @@ class MoveGenerator():
   def R(self,xi, yi, current_time, clusterMode):
     # if we already visited it, penalize
     if (xi, yi) in self.visited:
-      r = self.R_VIS
+      if clusterMode:
+        r = 2*self.R_VIS
+      else:
+        r = self.R_VIS
     else:
       r = self.R_UNVIS
       r += self.R_NEIGHBOR_BONUS * self.get_num_nutri_neighbors(xi, yi, self.VI_NEIGHBOR_WINDOW, False, False)
@@ -347,7 +326,7 @@ class MoveGenerator():
           r += dist_penalty(xi, yi, current_time)
 ####################################### HACK ALERT ########################################
       else:
-        r -= .1 * dist_penalty(xi - self.centroidX, yi - self.centroidY, current_time)
+        r -= .05 * dist_penalty(xi - self.centroidX, yi - self.centroidY, current_time)
     return r
 
 # NOTE: this is not the best version of VI because it assumes that
@@ -360,7 +339,7 @@ class MoveGenerator():
     PI = {}
 
     if clusterMode:
-      window = window+1/2
+      window = (window)/2
     
     states = self.get_neighbors(center, window + 1, True, True)
     states_window = self.get_neighbors(center, window, False, True)
@@ -424,23 +403,9 @@ class MoveGenerator():
     self.lastX = view.GetXPos()
     self.lastY = view.GetYPos()
     self.lastLife = view.GetLife()
-    
-    if view.GetPlantInfo() == game_interface.STATUS_UNKNOWN_PLANT:
-        data = list(view.GetImage())
-        data.append(self.lastX)
-        data.append(self.lastY)
-        data.append(self.get_num_nutri_neighbors(self.lastX, self.lastY))
-        data.append(self.get_num_pois_neighbors(self.lastX, self.lastY))
-        data.append(8 - self.get_num_empty_neighbors(self.lastX, self.lastY))
-        
-        eat = classify.get_class(data, self.mSVM, self.mDT, self.mANN,
-                                 self.mNBayes)
-        self.log_move(view, move, eat)
-	print 'Eat? %s' % eat
-        return (move, eat)
 
-    self.log_move(view, move, False)
-    return (move, False)
+    #self.log_move(view, move, True)
+    return (move, True)
 
 move_generator = MoveGenerator()
 
@@ -457,5 +422,4 @@ def init_point_settings(plant_bonus, plant_penalty, observation_cost,
                         starting_life, life_per_turn):
   '''Called before any moves are made.  Allows you to make customizations based
   on the specific scoring parameters in the game.'''
-  move_generator.init_models()
   move_generator.init_point_settings(plant_bonus, plant_penalty, observation_cost, starting_life, life_per_turn)
