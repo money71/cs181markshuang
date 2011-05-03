@@ -35,7 +35,7 @@ PARAM_FILE = "p"+PID+".conf"
 # and is irrelevant when close
 def dist_penalty(x, y, steps):
   d = sqrt(x*x + y*y)
-  return -.009  * pow(d, 1.35) 
+  return -.0088  * pow(d, 1.35) 
   return 0
 
 
@@ -149,7 +149,7 @@ class MoveGenerator():
     self.numNutri = 0
     self.centroidX = 0
     self.centroidY = 0
-    self.lastNutri = -20
+    self.lastNutri = 0
     self.centerX = 0
     self.centerY = 0
     self.lastLife = 0
@@ -157,7 +157,8 @@ class MoveGenerator():
 
     self.VIS_MULTIPLIER = -1.2   # * life_per_turn = R_VIS
     self.UNVIS_MULTIPLIER = .08 # * plant_bonus = R_UNVIS
-    self.NEIGHBOR_MULTIPLIER = .07  # * plant_bonus = R_NEIGHBOR_BONUS
+    self.NEIGHBOR_MULTIPLIER_CLUSTER = .07  # * plant_bonus = R_NEIGHBOR_BONUS
+    self.NEIGHBOR_MULTIPLIER_REG = .05  # * plant_bonus = R_NEIGHBOR_BONUS
     self.VI_H = 12
     self.VI_EXPLORE_WINDOW = 8
     self.VI_NEIGHBOR_WINDOW = 2
@@ -194,7 +195,8 @@ class MoveGenerator():
 
     self.R_VIS = self.life_per_turn * self.VIS_MULTIPLIER
     self.R_UNVIS = self.plant_bonus * self.UNVIS_MULTIPLIER
-    self.R_NEIGHBOR_BONUS = self.plant_bonus * self.NEIGHBOR_MULTIPLIER
+    self.R_NEIGHBOR_BONUS_CLUSTER = self.plant_bonus * self.NEIGHBOR_MULTIPLIER_CLUSTER
+    self.R_NEIGHBOR_BONUS_REG = self.plant_bonus * self.NEIGHBOR_MULTIPLIER_REG
     #self.fdebug.write(str(self.R_VIS) + " " + str(self.R_UNVIS))
   
   def init_models(self):
@@ -286,7 +288,7 @@ class MoveGenerator():
       #self.fmap.write(mapstr)
       return 0
     if self.lastPlant == game_interface.STATUS_UNKNOWN_PLANT:
-      nutri = self.lastLife < view.GetLife()
+      nutri = self.lastLife < view.GetLife() 
       if nutri:
         mapstr = "%d %d 2\n" % (self.lastX, self.lastY)
         self.lastNutriX = self.lastX
@@ -347,39 +349,48 @@ class MoveGenerator():
           neighbors.append((xi, yi))
     return neighbors
 
-  def R(self,xi, yi, current_time, clusterMode):
+  def R(self,xi, yi, current_time, clusterMode, searchMode):
+    if self.numNutri > CENTROID_THRESH:
+      dp = dist_penalty(xi - self.centroidX, yi - self.centroidY, current_time)
+    else:
+      dp = dist_penalty(xi, yi, current_time)
+    
+    if abs(xi)+abs(yi) > self.classifyDistance + 15:
+      dp = -10
+    
     # if we already visited it, penalize
     if (xi, yi) in self.visited:
-      if clusterMode:
-        r = 2*self.R_VIS
-      else:
-        r = self.R_VIS
+      r = self.R_VIS
+      if clusterMode or searchMode:
+        r += self.R_VIS
     else:
       r = self.R_UNVIS
-      r += self.R_NEIGHBOR_BONUS * self.get_num_nutri_neighbors(xi, yi, self.VI_NEIGHBOR_WINDOW, False, False)
-      if not clusterMode:
-        if self.numNutri > CENTROID_THRESH:
-          r += dist_penalty(xi - self.centroidX, yi - self.centroidY, current_time)
-        else:
-          r += dist_penalty(xi, yi, current_time)
-####################################### HACK ALERT ########################################
-      else:
-        r -= .05 * dist_penalty(xi - self.centroidX, yi - self.centroidY, current_time)
+#SEARCH MODE: double unvis bonus, half distance penalty from origin, no neighbor bonus
+      if searchMode:
+        r += self.R_UNVIS
+#CLUSTER MODE: negative distance penalty. neighbor bonus. 
+      if clusterMode:
+        r += self.R_NEIGHBOR_BONUS_CLUSTER * self.get_num_nutri_neighbors(xi, yi, self.VI_NEIGHBOR_WINDOW, False, False)
+        r -= .05 * dp
+#REGULAR MODE: 
+      if not clusterMode and not searchMode:
+        r += self.R_NEIGHBOR_BONUS_REG * self.get_num_nutri_neighbors(xi, yi, self.VI_NEIGHBOR_WINDOW, False, False)
+        r += dp
     return r
 
 # NOTE: this is not the best version of VI because it assumes that
 # states reached the same way are identical. for our purposes, they aren't..
 # the value of a state will change depending on what neighbors are visited.
 #cluster mode: when this is TRUE, no distance penalties are assessed
-  def VI(self, center, steps, window, current_time, clusterMode = False):
+  def VI(self, center, steps, window, current_time, clusterMode = False, searchMode = False):
     V = {}
     Q = {}
     PI = {}
 
     if clusterMode:
-      window = (window)/2
+      window = (window+1)/2
     
-    states = self.get_neighbors(center, window + 1, True, True)
+    states = self.get_neighbors(center, window + 2, True, True)
     states_window = self.get_neighbors(center, window, False, True)
     actions = (game_interface.UP, game_interface.LEFT, 
                game_interface.RIGHT, game_interface.DOWN)
@@ -390,7 +401,7 @@ class MoveGenerator():
       V[k] = {}
       Q[k] = {}
       for s in states:
-        PI[k][s] = -1
+        PI[k][s] = 0
         V[k][s] = 0.0
         Q[k][s] = {}
 
@@ -403,7 +414,7 @@ class MoveGenerator():
                    P_RIGHT   * V[k-1][find_R(s[0], s[1], a)]
 
           # update Q
-          Q[k][s][a] = self.R(s[0],s[1], current_time, clusterMode) + summand
+          Q[k][s][a] = self.R(s[0],s[1], current_time, clusterMode, searchMode) + summand
 
         # given current state, store the action that maximizes V in pi and the corresponding value in V
         PI[k][s] = actions[0]
@@ -431,12 +442,21 @@ class MoveGenerator():
 
     if (self.lastNutriX==0 and self.lastNutriY ==0):
       move = self.next_move_spiral_smart(x, y, self.centerX, self.centerY)
+    elif self.lastNutri + (view.GetLife()/5) < self.calls \
+        and abs(self.lastX)+abs(self.lastY) < self.classifyDistance:
+      move = self.next_move_spiral_smart(x, y, self.centerX, self.centerY)
     elif self.lastNutri + self.VI_EXPLORE_WINDOW + 1 > self.calls:
-      PI, Q = self.VI((self.lastNutriX,self.lastNutriY), self.VI_H, self.VI_EXPLORE_WINDOW, self.calls, True)
-      move = PI[(x, y)]
+      PI, Q = self.VI((self.lastNutriX,self.lastNutriY), self.VI_H, self.VI_EXPLORE_WINDOW, self.calls, True, False)
+      if (x,y) in PI:
+        move = PI[(x, y)]
+      else:
+        move = game_interface.LEFT
     else:
-      PI, Q = self.VI((x,y), self.VI_H, self.VI_EXPLORE_WINDOW, self.calls, False)
-      move = PI[(x, y)]
+      PI, Q = self.VI((x,y), self.VI_H, self.VI_EXPLORE_WINDOW, self.calls, False, False)
+      if (x,y) in PI:
+        move = PI[(x, y)]
+      else:
+        move = game_interface.LEFT
 
     self.lastX = view.GetXPos()
     self.lastY = view.GetYPos()
