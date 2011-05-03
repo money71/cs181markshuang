@@ -15,10 +15,10 @@ from nbayesutil import *
 
 
 # SVM parameters found using libsvm tools with cross-validated grid search.
-CVALS = [512]
-GVALS = [0.0001220703125]
+CVALS = [0.125]
+GVALS = [0.125]
 # DT parameter
-MAXROUNDS = 30
+MAXROUNDS = 50
 # NN parameters
 EPOCHS = 30
 RESTARTS = 3
