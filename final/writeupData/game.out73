@@ -1,0 +1,615 @@
+0 False 0 False
+99 99
+2 False 0 False
+98 98
+1 False 0 False
+97 97
+1 False 0 False
+96 96
+1 False 0 False
+95 95
+1 False 0 False
+94 94
+0 False 0 False
+93 93
+0 False 0 False
+92 92
+0 True 0 True
+81 81
+0 False 0 False
+80 80
+0 False 0 False
+79 79
+3 False 0 False
+78 78
+3 False 0 False
+77 77
+3 False 0 False
+76 76
+3 True 0 True
+65 65
+2 False 0 False
+64 64
+2 False 0 False
+63 63
+2 False 0 False
+62 62
+1 False 0 False
+61 61
+3 False 0 False
+60 60
+3 False 0 False
+59 59
+2 False 0 False
+58 58
+3 False 0 True
+57 47
+2 False 0 True
+56 36
+2 False 0 False
+55 35
+2 False 0 False
+54 34
+1 True 0 False
+73 33
+2 False 0 False
+72 32
+3 False 0 False
+71 31
+3 False 0 False
+70 30
+3 False 0 False
+69 29
+3 False 0 False
+68 28
+0 False 0 True
+67 47
+3 False 0 False
+66 46
+0 False 0 False
+65 45
+0 True 0 False
+84 44
+3 False 0 False
+83 43
+2 True 0 False
+102 42
+3 False 0 False
+101 41
+3 False 0 False
+100 40
+0 False 0 False
+99 39
+0 True 0 False
+118 38
+3 False 0 False
+117 37
+0 False 0 False
+116 36
+3 False 0 False
+115 35
+0 True 0 True
+134 24
+1 False 0 False
+133 23
+3 True 0 False
+152 22
+0 False 0 False
+151 21
+1 True 0 False
+170 20
+3 False 0 False
+169 19
+0 True 0 False
+188 18
+3 False 0 False
+187 17
+2 False 0 False
+186 16
+2 False 0 False
+185 15
+1 True 0 True
+204 4
+2 False 0 False
+203 3
+2 False 0 False
+202 2
+2 False 0 False
+201 1
+2 False 0 False
+200 0
+1 False 0 False
+199 -1
+2 False 0 False
+198 -2
+3 True 0 False
+217 -3
+2 False 0 False
+216 -4
+2 False 0 False
+215 -5
+1 False 0 False
+214 -6
+1 True 0 False
+203 -7
+1 False 0 False
+202 -8
+1 False 0 True
+201 -19
+1 False 0 False
+200 -20
+1 False 0 True
+199 -31
+2 False 0 False
+198 -32
+2 False 0 False
+197 -33
+2 False 0 True
+196 -44
+1 True 0 False
+215 -45
+2 False 0 False
+214 -46
+3 True 0 True
+203 -57
+2 False 0 False
+202 -58
+2 False 0 False
+201 -59
+2 False 0 False
+200 -60
+3 False 0 False
+199 -61
+3 False 0 False
+198 -62
+2 False 0 False
+197 -63
+1 False 0 False
+196 -64
+3 False 0 False
+195 -65
+3 True 0 False
+214 -66
+2 False 0 False
+213 -67
+2 False 0 False
+212 -68
+2 False 0 False
+211 -69
+3 False 0 False
+210 -70
+3 False 0 False
+209 -71
+0 False 0 False
+208 -72
+0 False 0 False
+207 -73
+1 False 0 False
+206 -74
+3 False 0 False
+205 -75
+3 False 0 False
+204 -76
+0 False 0 False
+203 -77
+0 False 0 False
+202 -78
+3 True 0 False
+191 -79
+3 False 0 False
+190 -80
+2 False 0 False
+189 -81
+2 False 0 False
+188 -82
+2 False 0 False
+187 -83
+2 False 0 False
+186 -84
+2 False 0 False
+185 -85
+1 True 0 False
+204 -86
+2 False 0 False
+203 -87
+3 False 0 False
+202 -88
+3 False 0 False
+201 -89
+3 False 0 False
+200 -90
+Accuracy = 100% (1/1) (classification)
+Accuracy = 0% (0/1) (classification)
+0 True 0 True
+187 -101
+0 False 0 False
+186 -102
+0 False 0 False
+185 -103
+0 False 0 False
+184 -104
+0 False 0 True
+183 -115
+0 False 0 False
+182 -116
+0 False 0 False
+181 -117
+0 True 0 False
+170 -118
+3 False 0 False
+169 -119
+3 False 0 True
+168 -130
+3 False 0 False
+167 -131
+3 False 0 False
+166 -132
+3 False 0 False
+165 -133
+3 False 0 True
+164 -144
+0 False 0 False
+163 -145
+0 False 0 False
+162 -146
+0 False 0 False
+161 -147
+0 False 0 False
+160 -148
+0 False 0 False
+159 -149
+0 False 0 False
+158 -150
+1 False 0 False
+157 -151
+1 True 0 True
+146 -162
+0 False 0 False
+145 -163
+0 False 0 False
+144 -164
+3 True 0 False
+163 -165
+0 False 0 False
+162 -166
+1 True 0 False
+151 -167
+1 False 0 False
+150 -168
+0 False 0 False
+149 -169
+1 False 0 False
+148 -170
+0 False 0 False
+147 -171
+3 False 0 False
+146 -172
+0 True 0 False
+165 -173
+3 False 0 False
+164 -174
+3 False 0 False
+163 -175
+3 False 0 False
+162 -176
+2 False 0 False
+161 -177
+2 False 0 False
+160 -178
+2 False 0 False
+159 -179
+2 False 0 False
+158 -180
+2 False 0 False
+157 -181
+2 False 0 False
+156 -182
+1 False 0 True
+155 -193
+1 False 0 False
+154 -194
+0 True 0 False
+143 -195
+0 False 0 False
+142 -196
+0 False 0 False
+141 -197
+1 False 0 False
+140 -198
+1 True 0 False
+129 -199
+1 False 0 False
+128 -200
+1 False 0 False
+127 -201
+2 True 0 False
+146 -202
+2 True 0 False
+165 -203
+2 True 0 False
+184 -204
+1 True 0 False
+203 -205
+1 False 0 False
+202 -206
+1 False 0 False
+201 -207
+0 False 0 True
+200 -218
+0 False 0 False
+199 -219
+0 True 0 False
+218 -220
+3 False 0 False
+217 -221
+0 True 0 False
+206 -222
+1 False 0 False
+205 -223
+1 True 0 True
+194 -234
+2 False 0 False
+193 -235
+2 False 0 False
+192 -236
+2 False 0 False
+191 -237
+2 False 0 False
+190 -238
+2 False 0 False
+189 -239
+3 False 0 False
+188 -240
+2 False 0 False
+187 -241
+2 False 0 False
+186 -242
+2 False 0 True
+185 -253
+2 False 0 False
+184 -254
+3 False 0 False
+183 -255
+2 False 0 False
+182 -256
+1 False 0 True
+181 -267
+1 False 0 False
+180 -268
+1 False 0 False
+179 -269
+1 False 0 False
+178 -270
+2 False 0 False
+177 -271
+2 False 0 False
+176 -272
+2 False 0 False
+175 -273
+2 False 0 False
+174 -274
+2 False 0 True
+173 -285
+2 True 0 False
+162 -286
+2 False 0 False
+161 -287
+3 False 0 False
+160 -288
+3 True 0 False
+149 -289
+0 False 0 False
+148 -290
+0 False 0 False
+147 -291
+0 True 0 False
+136 -292
+0 False 0 False
+135 -293
+1 False 0 False
+134 -294
+1 False 0 False
+133 -295
+1 False 0 False
+132 -296
+1 True 0 False
+121 -297
+0 False 0 True
+120 -308
+0 True 0 False
+109 -309
+1 True 0 True
+128 -320
+2 False 0 False
+127 -321
+1 False 0 True
+126 -332
+0 False 0 True
+125 -343
+3 False 0 False
+124 -344
+1 False 0 True
+123 -355
+3 False 0 False
+122 -356
+3 False 0 False
+121 -357
+0 False 0 True
+120 -368
+2 True 0 False
+139 -369
+0 False 0 True
+138 -380
+0 False 0 False
+137 -381
+0 False 0 False
+136 -382
+0 False 0 False
+135 -383
+0 False 0 False
+134 -384
+0 False 0 False
+133 -385
+0 False 0 False
+132 -386
+0 False 0 False
+131 -387
+3 False 0 False
+130 -388
+3 False 0 False
+129 -389
+3 False 0 False
+128 -390
+3 True 0 False
+117 -391
+3 False 0 True
+116 -402
+0 False 0 False
+115 -403
+0 False 0 False
+114 -404
+0 True 0 False
+103 -405
+0 False 0 False
+102 -406
+3 False 0 True
+101 -417
+3 False 0 False
+100 -418
+3 False 0 False
+99 -419
+3 False 0 False
+98 -420
+3 False 0 False
+97 -421
+3 False 0 False
+96 -422
+2 True 0 False
+85 -423
+2 False 0 False
+84 -424
+2 False 0 False
+83 -425
+0 True 0 False
+102 -426
+1 False 0 False
+101 -427
+2 False 0 False
+100 -428
+3 False 0 False
+99 -429
+3 False 0 False
+98 -430
+3 True 0 False
+117 -431
+0 False 0 False
+116 -432
+1 False 0 True
+115 -443
+0 True 0 False
+134 -444
+3 False 0 False
+133 -445
+3 False 0 False
+132 -446
+2 False 0 False
+131 -447
+2 True 0 False
+120 -448
+1 False 0 True
+119 -459
+1 True 0 False
+108 -460
+0 False 0 False
+107 -461
+0 True 0 False
+96 -462
+0 False 0 False
+95 -463
+0 False 0 False
+94 -464
+1 False 0 False
+93 -465
+1 False 0 False
+92 -466
+1 False 0 False
+91 -467
+0 False 0 False
+90 -468
+0 False 0 False
+89 -469
+0 True 0 False
+78 -470
+3 False 0 False
+77 -471
+3 True 0 False
+66 -472
+3 False 0 False
+65 -473
+2 False 0 False
+64 -474
+2 False 0 False
+63 -475
+2 False 0 False
+62 -476
+3 False 0 False
+61 -477
+2 False 0 True
+60 -488
+3 False 0 False
+59 -489
+0 False 0 False
+58 -490
+3 False 0 False
+57 -491
+0 False 0 False
+56 -492
+0 False 0 True
+55 -503
+0 True 0 False
+44 -504
+3 False 0 False
+43 -505
+3 False 0 False
+42 -506
+3 False 0 False
+41 -507
+3 False 0 False
+40 -508
+Accuracy = 0% (0/1) (classification)
+Accuracy = 0% (0/1) (classification)
+3 True 0 False
+27 -509
+3 False 0 False
+26 -510
+3 False 0 False
+25 -511
+Accuracy = 100% (1/1) (classification)
+Accuracy = 100% (1/1) (classification)
+2 False 0 False
+22 -512
+2 False 0 False
+21 -513
+2 False 0 True
+20 -524
+2 False 0 False
+19 -525
+2 False 0 False
+18 -526
+2 False 0 False
+17 -527
+2 False 0 False
+16 -528
+2 False 0 False
+15 -529
+2 False 0 False
+14 -530
+2 True 0 False
+3 -531
+2 False 0 False
+2 -532
+2 False 0 False
+1 -533
+2 False 0 False
+0 -534
+Single player mode: lasted 304 rounds

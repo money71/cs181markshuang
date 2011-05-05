@@ -1,0 +1,997 @@
+0 False 0 False
+99 99
+3 False 0 False
+98 98
+2 False 0 False
+97 97
+2 True 0 False
+86 96
+1 False 0 False
+85 95
+1 False 0 True
+84 84
+0 False 0 False
+83 83
+3 False 0 True
+82 102
+3 False 0 True
+81 121
+2 True 0 False
+100 120
+3 False 0 True
+99 139
+0 True 0 False
+88 138
+0 False 0 True
+87 157
+0 False 0 True
+86 176
+0 False 0 False
+85 175
+3 False 0 False
+84 174
+2 False 0 False
+83 173
+2 True 0 False
+102 172
+2 False 0 False
+101 171
+3 False 0 False
+100 170
+3 False 0 False
+99 169
+3 False 0 True
+98 158
+0 False 0 True
+97 147
+1 False 0 True
+96 166
+1 True 0 False
+115 165
+0 False 0 True
+114 154
+3 True 0 False
+133 153
+0 True 0 False
+152 152
+3 True 0 False
+171 151
+2 True 0 False
+190 150
+3 True 0 False
+209 149
+0 True 0 False
+228 148
+2 True 0 True
+247 137
+2 False 0 False
+246 136
+0 False 0 False
+245 135
+1 False 0 True
+244 124
+1 False 0 False
+243 123
+1 False 0 False
+242 122
+2 False 0 False
+241 121
+2 False 0 False
+240 120
+1 True 0 False
+259 119
+2 False 0 False
+258 118
+1 False 0 True
+257 107
+2 False 0 False
+256 106
+3 True 0 False
+275 105
+3 False 0 False
+274 104
+2 False 0 False
+273 103
+2 False 0 False
+272 102
+1 False 0 False
+271 101
+2 False 0 False
+270 100
+1 False 0 False
+269 99
+0 False 0 True
+268 88
+1 False 0 False
+267 87
+1 False 0 False
+266 86
+0 False 0 False
+265 85
+1 False 0 False
+264 84
+0 False 0 True
+263 73
+1 False 0 False
+262 72
+1 True 0 False
+281 71
+2 False 0 False
+280 70
+3 False 0 True
+279 59
+3 True 0 False
+268 58
+3 False 0 False
+267 57
+0 True 0 True
+256 46
+1 False 0 False
+255 45
+2 True 0 False
+244 44
+2 False 0 False
+243 43
+2 False 0 False
+242 42
+2 False 0 False
+241 41
+2 False 0 False
+240 40
+2 False 0 False
+239 39
+3 False 0 False
+238 38
+3 False 0 False
+237 37
+3 False 0 False
+236 36
+3 False 0 False
+235 35
+3 True 0 True
+224 24
+3 False 0 False
+223 23
+3 False 0 False
+222 22
+0 False 0 False
+221 21
+0 False 0 False
+220 20
+0 False 0 True
+219 9
+0 False 0 True
+218 -2
+0 False 0 False
+217 -3
+0 False 0 False
+216 -4
+0 False 0 False
+215 -5
+0 False 0 False
+214 -6
+0 False 0 False
+213 -7
+0 False 0 False
+212 -8
+0 False 0 True
+211 -19
+0 False 0 False
+210 -20
+1 False 0 True
+209 -31
+1 True 0 False
+198 -32
+1 False 0 True
+197 -43
+1 False 0 False
+196 -44
+2 False 0 False
+195 -45
+1 False 0 False
+194 -46
+1 False 0 True
+193 -57
+0 False 0 False
+192 -58
+3 False 0 False
+191 -59
+3 False 0 False
+190 -60
+3 False 0 False
+189 -61
+3 False 0 False
+188 -62
+3 False 0 False
+187 -63
+3 False 0 True
+186 -74
+3 True 0 False
+205 -75
+3 False 0 False
+204 -76
+0 False 0 False
+203 -77
+1 False 0 False
+202 -78
+0 True 0 False
+191 -79
+0 False 0 False
+190 -80
+0 False 0 False
+189 -81
+3 False 0 False
+188 -82
+3 True 0 False
+177 -83
+0 False 0 False
+176 -84
+0 False 0 False
+175 -85
+0 True 0 False
+194 -86
+0 False 0 False
+193 -87
+Accuracy = 0% (0/1) (classification)
+Accuracy = 100% (1/1) (classification)
+3 False 0 False
+190 -88
+2 False 0 False
+189 -89
+2 False 0 False
+188 -90
+3 False 0 False
+187 -91
+Accuracy = 100% (1/1) (classification)
+Accuracy = 100% (1/1) (classification)
+0 False 0 False
+184 -92
+1 False 0 False
+183 -93
+1 False 0 True
+182 -104
+1 False 0 False
+181 -105
+1 False 0 False
+180 -106
+1 False 0 False
+179 -107
+1 False 0 False
+178 -108
+2 False 0 True
+177 -119
+1 False 0 False
+176 -120
+1 True 0 False
+195 -121
+0 False 0 False
+194 -122
+3 False 0 True
+193 -133
+0 False 0 True
+192 -144
+1 False 0 False
+191 -145
+1 False 0 True
+190 -156
+2 False 0 False
+189 -157
+1 False 0 False
+188 -158
+2 False 0 False
+187 -159
+2 False 0 False
+186 -160
+2 False 0 False
+185 -161
+2 False 0 False
+184 -162
+1 False 0 False
+183 -163
+2 False 0 False
+182 -164
+1 False 0 True
+181 -175
+1 False 0 False
+180 -176
+1 False 0 False
+179 -177
+1 False 0 False
+178 -178
+2 False 0 False
+177 -179
+2 False 0 False
+176 -180
+2 False 0 False
+175 -181
+2 False 0 False
+174 -182
+2 False 0 False
+173 -183
+2 False 0 False
+172 -184
+2 False 0 False
+171 -185
+1 True 0 True
+190 -196
+1 False 0 False
+189 -197
+1 True 0 False
+208 -198
+1 True 0 False
+227 -199
+0 False 0 False
+226 -200
+0 False 0 False
+225 -201
+0 False 0 False
+224 -202
+0 False 0 True
+223 -213
+3 True 0 True
+242 -224
+3 False 0 False
+241 -225
+2 True 0 True
+260 -236
+0 True 0 False
+249 -237
+1 False 0 False
+248 -238
+1 False 0 False
+247 -239
+0 False 0 True
+246 -250
+1 False 0 False
+245 -251
+0 False 0 False
+244 -252
+1 False 0 False
+243 -253
+0 True 0 False
+262 -254
+0 True 0 False
+281 -255
+0 False 0 True
+280 -266
+1 False 0 False
+279 -267
+1 False 0 False
+278 -268
+1 False 0 False
+277 -269
+2 False 0 False
+276 -270
+2 True 0 False
+295 -271
+2 True 0 False
+314 -272
+1 True 0 False
+333 -273
+0 False 0 False
+332 -274
+2 True 0 True
+351 -285
+1 False 0 False
+350 -286
+0 False 0 False
+349 -287
+1 True 0 False
+368 -288
+2 False 0 False
+367 -289
+1 True 0 False
+386 -290
+2 False 0 False
+385 -291
+3 False 0 False
+384 -292
+2 False 0 False
+383 -293
+1 False 0 False
+382 -294
+0 True 0 True
+401 -305
+1 False 0 False
+400 -306
+1 False 0 False
+399 -307
+1 False 0 False
+398 -308
+2 False 0 True
+397 -319
+1 True 0 False
+416 -320
+1 True 0 False
+405 -321
+0 False 0 False
+404 -322
+3 False 0 False
+403 -323
+3 False 0 False
+402 -324
+0 False 0 False
+401 -325
+3 False 0 True
+400 -336
+0 True 0 False
+419 -337
+0 True 0 True
+438 -348
+0 False 0 False
+437 -349
+0 False 0 False
+436 -350
+3 False 0 False
+435 -351
+2 False 0 False
+434 -352
+1 False 0 False
+433 -353
+3 False 0 False
+432 -354
+3 False 0 False
+431 -355
+3 True 0 False
+450 -356
+3 False 0 True
+449 -367
+2 False 0 False
+448 -368
+3 False 0 False
+447 -369
+2 False 0 False
+446 -370
+1 False 0 False
+445 -371
+2 True 0 False
+464 -372
+2 False 0 True
+463 -383
+2 False 0 False
+462 -384
+1 False 0 False
+461 -385
+2 True 0 False
+450 -386
+3 False 0 False
+449 -387
+3 False 0 False
+448 -388
+3 False 0 False
+447 -389
+0 False 0 False
+446 -390
+3 True 0 False
+435 -391
+3 False 0 False
+434 -392
+1 False 0 False
+433 -393
+0 True 0 False
+452 -394
+0 False 0 True
+451 -405
+0 False 0 False
+450 -406
+3 False 0 False
+449 -407
+0 False 0 True
+448 -418
+0 False 0 False
+447 -419
+0 False 0 False
+446 -420
+0 False 0 True
+445 -431
+0 False 0 False
+444 -432
+1 False 0 False
+443 -433
+2 False 0 False
+442 -434
+2 True 0 False
+431 -435
+2 True 0 False
+420 -436
+1 True 0 False
+409 -437
+1 False 0 False
+408 -438
+1 False 0 False
+407 -439
+2 False 0 False
+406 -440
+2 False 0 False
+405 -441
+2 False 0 False
+404 -442
+2 True 0 False
+393 -443
+2 False 0 False
+392 -444
+1 False 0 False
+391 -445
+1 False 0 False
+390 -446
+1 False 0 False
+389 -447
+1 False 0 False
+388 -448
+1 False 0 False
+387 -449
+1 False 0 False
+386 -450
+2 False 0 False
+385 -451
+2 False 0 False
+384 -452
+2 False 0 False
+383 -453
+1 False 0 False
+382 -454
+2 True 0 False
+371 -455
+2 False 0 False
+370 -456
+2 True 0 False
+359 -457
+1 False 0 True
+358 -468
+2 False 0 False
+357 -469
+2 False 0 True
+356 -480
+2 False 0 False
+355 -481
+2 False 0 False
+354 -482
+2 False 0 False
+353 -483
+3 False 0 False
+352 -484
+3 False 0 False
+351 -485
+3 True 0 False
+340 -486
+2 False 0 False
+339 -487
+3 False 0 False
+338 -488
+3 False 0 False
+337 -489
+3 False 0 False
+336 -490
+2 False 0 True
+335 -501
+2 False 0 False
+334 -502
+2 False 0 False
+333 -503
+3 False 0 False
+332 -504
+3 False 0 True
+331 -515
+2 False 0 True
+330 -526
+2 False 0 True
+329 -537
+2 True 0 False
+348 -538
+2 False 0 False
+347 -539
+2 False 0 False
+346 -540
+3 False 0 True
+345 -551
+3 False 0 False
+344 -552
+2 True 0 True
+363 -563
+2 False 0 False
+362 -564
+3 False 0 False
+361 -565
+2 True 0 False
+350 -566
+3 False 0 False
+349 -567
+0 False 0 False
+348 -568
+2 False 0 False
+347 -569
+1 False 0 False
+346 -570
+0 True 0 False
+335 -571
+1 False 0 False
+334 -572
+1 True 0 False
+323 -573
+1 False 0 False
+322 -574
+1 False 0 False
+321 -575
+2 True 0 False
+310 -576
+2 False 0 False
+309 -577
+2 False 0 False
+308 -578
+2 False 0 False
+307 -579
+2 False 0 True
+306 -590
+2 False 0 True
+305 -601
+2 False 0 False
+304 -602
+3 False 0 False
+303 -603
+3 False 0 False
+302 -604
+3 True 0 False
+321 -605
+3 True 0 False
+340 -606
+0 False 0 False
+339 -607
+2 False 0 False
+338 -608
+0 False 0 False
+337 -609
+0 False 0 False
+336 -610
+1 False 0 False
+335 -611
+1 False 0 False
+334 -612
+2 True 0 False
+323 -613
+2 False 0 False
+322 -614
+2 False 0 False
+321 -615
+2 False 0 False
+320 -616
+1 False 0 True
+319 -627
+0 False 0 False
+318 -628
+1 False 0 False
+317 -629
+2 False 0 False
+316 -630
+2 False 0 False
+315 -631
+2 False 0 True
+314 -642
+3 True 0 False
+303 -643
+3 True 0 False
+292 -644
+3 False 0 False
+291 -645
+0 False 0 False
+290 -646
+0 False 0 False
+289 -647
+0 False 0 True
+288 -658
+0 False 0 False
+287 -659
+0 False 0 False
+286 -660
+0 False 0 False
+285 -661
+0 False 0 False
+284 -662
+1 False 0 False
+283 -663
+1 True 0 True
+302 -674
+0 False 0 False
+301 -675
+3 True 0 False
+290 -676
+0 False 0 False
+289 -677
+3 False 0 False
+288 -678
+2 True 0 False
+277 -679
+3 False 0 False
+276 -680
+3 False 0 False
+275 -681
+2 False 0 False
+274 -682
+3 True 0 True
+263 -693
+3 True 0 False
+252 -694
+3 True 0 False
+241 -695
+3 False 0 False
+240 -696
+3 False 0 False
+239 -697
+3 False 0 False
+238 -698
+3 True 0 False
+227 -699
+0 False 0 True
+226 -710
+0 True 0 False
+215 -711
+0 False 0 False
+214 -712
+1 False 0 False
+213 -713
+1 False 0 False
+212 -714
+0 False 0 False
+211 -715
+0 False 0 False
+210 -716
+0 False 0 False
+209 -717
+3 True 0 False
+228 -718
+0 True 0 False
+217 -719
+1 False 0 False
+216 -720
+3 False 0 False
+215 -721
+2 False 0 False
+214 -722
+2 False 0 False
+213 -723
+1 True 0 True
+202 -734
+0 False 0 True
+201 -745
+0 False 0 False
+200 -746
+1 False 0 False
+199 -747
+1 False 0 False
+198 -748
+1 False 0 False
+197 -749
+1 False 0 False
+196 -750
+1 True 0 False
+185 -751
+2 False 0 False
+184 -752
+2 False 0 False
+183 -753
+2 False 0 False
+182 -754
+3 False 0 False
+181 -755
+3 False 0 False
+180 -756
+0 False 0 True
+179 -767
+1 False 0 False
+178 -768
+1 False 0 False
+177 -769
+1 False 0 False
+176 -770
+1 False 0 True
+175 -781
+1 False 0 True
+174 -792
+1 True 0 False
+163 -793
+1 False 0 True
+162 -804
+1 True 0 False
+181 -805
+1 False 0 False
+180 -806
+2 False 0 False
+179 -807
+3 True 0 False
+168 -808
+3 False 0 False
+167 -809
+3 False 0 False
+166 -810
+3 False 0 False
+165 -811
+3 False 0 False
+164 -812
+3 False 0 True
+163 -823
+0 False 0 False
+162 -824
+3 False 0 False
+161 -825
+3 False 0 False
+160 -826
+2 False 0 False
+159 -827
+2 False 0 False
+158 -828
+2 False 0 False
+157 -829
+2 False 0 False
+156 -830
+3 False 0 False
+155 -831
+3 False 0 False
+154 -832
+2 True 0 True
+143 -843
+2 False 0 True
+142 -854
+2 False 0 False
+141 -855
+2 False 0 True
+140 -866
+2 False 0 False
+139 -867
+2 False 0 False
+138 -868
+2 False 0 False
+137 -869
+2 False 0 False
+136 -870
+2 False 0 False
+135 -871
+2 False 0 False
+134 -872
+1 False 0 False
+133 -873
+1 False 0 True
+132 -884
+1 False 0 False
+131 -885
+1 False 0 False
+130 -886
+1 True 0 False
+119 -887
+1 False 0 False
+118 -888
+1 True 0 False
+107 -889
+1 False 0 False
+106 -890
+1 False 0 False
+105 -891
+1 False 0 False
+104 -892
+1 False 0 False
+103 -893
+1 False 0 False
+102 -894
+1 False 0 False
+101 -895
+1 True 0 False
+90 -896
+1 False 0 False
+89 -897
+1 False 0 False
+88 -898
+0 False 0 False
+87 -899
+0 False 0 False
+86 -900
+0 False 0 False
+85 -901
+0 False 0 False
+84 -902
+1 False 0 False
+83 -903
+0 False 0 False
+82 -904
+0 False 0 False
+81 -905
+0 False 0 False
+80 -906
+1 False 0 False
+79 -907
+1 False 0 False
+78 -908
+1 False 0 False
+77 -909
+0 True 0 False
+66 -910
+0 True 0 False
+55 -911
+0 False 0 False
+54 -912
+0 False 0 False
+53 -913
+0 False 0 False
+52 -914
+0 True 0 False
+71 -915
+1 True 0 False
+60 -916
+1 False 0 False
+59 -917
+2 False 0 False
+58 -918
+2 False 0 False
+57 -919
+1 False 0 False
+56 -920
+2 False 0 False
+55 -921
+2 False 0 False
+54 -922
+2 False 0 False
+53 -923
+3 False 0 True
+52 -934
+3 False 0 False
+51 -935
+2 True 0 False
+70 -936
+3 False 0 False
+69 -937
+0 False 0 False
+68 -938
+0 True 0 False
+57 -939
+1 False 0 False
+56 -940
+0 False 0 False
+55 -941
+0 False 0 False
+54 -942
+3 True 0 False
+43 -943
+0 True 0 False
+32 -944
+0 False 0 False
+31 -945
+0 True 0 False
+20 -946
+3 False 0 False
+19 -947
+3 False 0 False
+18 -948
+0 False 0 False
+17 -949
+0 False 0 False
+16 -950
+0 False 0 False
+15 -951
+0 False 0 False
+14 -952
+3 False 0 False
+13 -953
+0 False 0 True
+12 -964
+3 False 0 False
+11 -965
+0 False 0 False
+10 -966
+0 False 0 False
+9 -967
+0 False 0 False
+8 -968
+0 False 0 False
+7 -969
+3 False 0 False
+6 -970
+0 False 0 False
+5 -971
+3 False 0 False
+4 -972
+3 False 0 False
+3 -973
+0 False 0 False
+2 -974
+3 False 0 False
+1 -975
+0 False 0 False
+0 -976
+Single player mode: lasted 496 rounds

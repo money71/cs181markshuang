@@ -1,0 +1,161 @@
+0 False 0 False
+99 99
+3 True 0 True
+88 88
+2 False 0 False
+87 87
+2 True 0 False
+106 86
+2 False 0 False
+105 85
+3 False 0 False
+104 84
+3 False 0 False
+103 83
+3 False 0 False
+102 82
+3 False 0 False
+101 81
+3 False 0 True
+100 70
+3 False 0 False
+99 69
+2 False 0 False
+98 68
+0 False 0 True
+97 57
+0 False 0 True
+96 76
+1 False 0 False
+95 75
+1 True 0 True
+114 64
+0 False 0 False
+113 63
+3 False 0 False
+112 62
+1 False 0 False
+111 61
+0 False 0 False
+110 60
+0 True 0 False
+129 59
+3 False 0 False
+128 58
+3 False 0 False
+127 57
+2 True 0 False
+116 56
+3 False 0 False
+115 55
+2 False 0 True
+114 44
+3 False 0 False
+113 43
+2 False 0 False
+112 42
+1 False 0 False
+111 41
+3 False 0 False
+110 40
+3 False 0 False
+109 39
+2 False 0 False
+108 38
+2 True 0 False
+97 37
+2 False 0 True
+96 26
+2 False 0 False
+95 25
+2 False 0 False
+94 24
+2 False 0 False
+93 23
+2 True 0 False
+112 22
+3 False 0 False
+111 21
+3 True 0 False
+100 20
+0 False 0 False
+99 19
+0 True 0 False
+88 18
+3 False 0 False
+87 17
+0 False 0 False
+86 16
+0 False 0 False
+85 15
+1 False 0 False
+84 14
+0 False 0 False
+83 13
+0 False 0 False
+82 12
+0 False 0 False
+81 11
+0 False 0 False
+80 10
+0 False 0 True
+79 -1
+0 False 0 False
+78 -2
+0 False 0 False
+77 -3
+3 False 0 True
+76 -14
+3 False 0 False
+75 -15
+3 False 0 False
+74 -16
+3 False 0 False
+73 -17
+3 False 0 False
+72 -18
+Accuracy = 0% (0/1) (classification)
+Accuracy = 100% (1/1) (classification)
+3 True 0 False
+59 -19
+2 False 0 False
+58 -20
+2 False 0 False
+57 -21
+2 True 0 False
+46 -22
+2 False 0 False
+45 -23
+2 False 0 False
+44 -24
+2 False 0 True
+43 -35
+2 False 0 True
+42 -46
+2 False 0 False
+41 -47
+2 False 0 False
+40 -48
+2 False 0 False
+39 -49
+2 False 0 False
+38 -50
+2 False 0 True
+37 -61
+2 False 0 False
+36 -62
+2 True 0 False
+25 -63
+2 True 0 False
+14 -64
+2 False 0 True
+13 -75
+2 False 0 True
+12 -86
+2 False 0 False
+11 -87
+2 False 0 False
+10 -88
+2 True 0 False
+-1 -89
+Single player mode: lasted 79 rounds
